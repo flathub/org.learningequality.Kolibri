@@ -1,11 +1,13 @@
 {
   "app-id": "org.learningequality.Kolibri",
-  "runtime": "org.freedesktop.Platform",
-  "runtime-version": "19.08",
-  "sdk": "org.freedesktop.Sdk",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "3.34",
+  "sdk": "org.gnome.Sdk",
   "finish-args": [
     "--share=network",
-    "--persist=.kolibri"
+    "--persist=.kolibri",
+    "--socket=system-bus",
+    "--socket=session-bus"
   ],
   "command": "open_kolibri.sh",
   "modules": [
@@ -23,8 +25,50 @@
         },
         {
           "type": "patch",
-          "path": "kolibri_heartbeat.patch"
+          "path": "src/kolibri_heartbeat.patch"
+        },
+        {
+          "type": "patch",
+          "path": "src/gnome_search_provider_service.patch"
         }
+      ]
+    },
+    "shared-modules/dbus-glib/dbus-glib-0.110.json",
+    {
+      "name": "python-dbus",
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://pypi.python.org/packages/ad/1b/76adc363212c642cabbf9329457a918308c0b9b5d38ce04d541a67255174/dbus-python-1.2.4.tar.gz",
+          "sha256": "e2f1d6871f74fba23652e51d10873e54f71adab0525833c19bad9e99b1b2f9cc"
+        }
+      ],
+      "build-options": {
+        "env": {
+          "PYTHON": "python3.7"
+        }
+      }
+    },
+    {
+      "name": "pygobject",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python3 setup.py install --prefix=/app"
+      ],
+      "ensure-writable": [
+        "/lib/python*/site-packages/easy-install.pth"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://download.gnome.org/sources/pygobject/3.34/pygobject-3.34.0.tar.xz",
+          "sha256": "87e2c9aa785f352ef111dcc5f63df9b85cf6e05e52ff04f803ffbebdacf5271a"
+        }
+      ],
+      "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/lib/python*/site-packages/gi/*.la"
       ]
     },
     {
@@ -54,7 +98,8 @@
         "install -Dm644 org.learningequality.Kolibri.metainfo.xml /app/share/metainfo/org.learningequality.Kolibri.metainfo.xml",
         "install -Dm644 org.learningequality.Kolibri.desktop /app/share/applications/org.learningequality.Kolibri.desktop",
         "install -Dm644 icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png"
+        "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini"
       ],
       "sources": [
         {

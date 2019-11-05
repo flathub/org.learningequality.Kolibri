@@ -21,3 +21,6 @@ clean:
 
 shell:
 	flatpak run --command=bash --devel org.learningequality.Kolibri
+
+bundle:
+	flatpak build-bundle repo kolibri.flatpak org.learningequality.Kolibri

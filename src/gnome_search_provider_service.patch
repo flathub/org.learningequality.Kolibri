@@ -1,0 +1,91 @@
+--- kolibri-0.12.8/kolibri/core/content/management/commands/gnome_search_provider_service.py	1969-12-31 16:00:00.000000000 -0800
++++ kolibri-0.12.8/kolibri/core/content/management/commands/gnome_search_provider_service.py	2019-11-04 13:01:42.503412449 -0800
+@@ -0,0 +1,88 @@
++import dbus
++import dbus.glib
++import dbus.service
++import re
++import json
++import subprocess
++import sys
++import urllib.parse
++import webbrowser
++
++from gi.repository import GLib
++from django.core.management.base import BaseCommand
++from rest_framework.test import APIRequestFactory
++
++from kolibri.core.content.api import ContentNodeSearchViewset
++from kolibri.core.content.models import ContentNode
++
++
++class Command(BaseCommand):
++    """
++    Runs a GNOME search provider D-Bus service to find results in Kolibri.
++    """
++
++    def handle(self, *args, **options):
++        SearchService()
++        GLib.MainLoop().run()
++
++
++def get_search_result_ids(terms):
++    request = APIRequestFactory().get("", {"search": terms, "max_results": 10})
++    search_view = ContentNodeSearchViewset.as_view({"get": "list"})
++    response = search_view(request)
++    return [
++        ("t/" if result["kind"] == "topic" else "c/") + result["id"]
++        for result in response.data["results"]
++    ]
++
++
++dbus_args = {"dbus_interface": "org.gnome.Shell.SearchProvider2"}
++
++
++class SearchService(dbus.service.Object):
++
++    bus_name = "org.learningequality.Kolibri.SearchProvider"
++    _object_path = "/" + bus_name.replace(".", "/")
++
++    def __init__(self):
++        self.session_bus = dbus.SessionBus()
++        bus_name = dbus.service.BusName(self.bus_name, bus=self.session_bus)
++        super().__init__(bus_name, self._object_path)
++
++    @dbus.service.method(in_signature="sasu", **dbus_args)
++    def ActivateResult(self, item_id, terms, timestamp):
++        webbrowser.open(
++            "http://127.0.0.1:8080/learn/#/topics/{id}?searchTerm={terms}".format(
++                id=item_id, terms=urllib.parse.quote(" ".join(terms))
++            )
++        )
++
++    @dbus.service.method(in_signature="as", out_signature="as", **dbus_args)
++    def GetInitialResultSet(self, terms):
++        print("GetInitialResultSet: %r" % terms)
++        return get_search_result_ids(terms)
++
++    @dbus.service.method(in_signature="asas", out_signature="as", **dbus_args)
++    def GetSubsearchResultSet(self, previous_results, new_terms):
++        print("GetSubsearchResultSet:\n\t%r\n\t%r\n" % (previous_results, new_terms))
++        return get_search_result_ids(new_terms)
++
++    @dbus.service.method(in_signature="as", out_signature="aa{sv}", **dbus_args)
++    def GetResultMetas(self, ids):
++        print("GetResultMetas: %r" % ids)
++        return [
++            dict(
++                id=item_id,
++                name=ContentNode.objects.get(id=item_id.split("/")[-1]).title,
++                gicon="dialog-password",
++            )
++            for item_id in ids
++        ]
++
++    @dbus.service.method(in_signature="asu", terms="as", timestamp="u", **dbus_args)
++    def LaunchSearch(self, terms, timestamp):
++        webbrowser.open(
++            "http://127.0.0.1:8080/learn/#/search?searchTerm={terms}".format(
++                terms=urllib.parse.quote(" ".join(terms))
++            )
++        )
