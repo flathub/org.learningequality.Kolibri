@@ -78,6 +78,7 @@
         "install -D envvars.sh /app/bin/envvars.sh",
         "install -D run_kolibri.sh /app/bin/run_kolibri.sh",
         "install -D open_kolibri.sh /app/bin/open_kolibri.sh",
+        "install -D kolibri_search_service.sh /app/bin/kolibri_search_service.sh",
         "install -D check_for_running_tasks.sh /app/bin/check_for_running_tasks.sh",
         "install -D redirect_server.py /app/www/redirect_server.py",
         "install -D index.htm /app/www/index.htm",
@@ -99,7 +100,8 @@
         "install -Dm644 org.learningequality.Kolibri.desktop /app/share/applications/org.learningequality.Kolibri.desktop",
         "install -Dm644 icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
         "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini"
+        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
+        "install -Dm644 org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
       ],
       "sources": [
         {

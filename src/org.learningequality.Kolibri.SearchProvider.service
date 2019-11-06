@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.learningequality.Kolibri.SearchProvider
+Exec=/usr/bin/flatpak run --command=/app/bin/kolibri_search_service.sh org.learningequality.Kolibri
