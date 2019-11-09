@@ -5,9 +5,7 @@
   "sdk": "org.gnome.Sdk",
   "finish-args": [
     "--share=network",
-    "--persist=.kolibri",
-    "--socket=system-bus",
-    "--socket=session-bus"
+    "--persist=.kolibri"
   ],
   "command": "open_kolibri.sh",
   "modules": [
