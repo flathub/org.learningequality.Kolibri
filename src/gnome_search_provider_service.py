@@ -1,0 +1,89 @@
+import dbus
+import dbus.glib
+import dbus.service
+
+from gi.repository import GLib
+from django.core.management.base import BaseCommand
+from rest_framework.test import APIRequestFactory
+
+from kolibri.core.content.api import ContentNodeSearchViewset
+from kolibri.core.content.models import ContentNode
+
+
+ICON_LOOKUP = {
+    "video": "video-x-generic",
+    "exercise": "edit-paste",
+    "document": "x-office-document",
+    "topic": "folder",
+    "audio": "audio-x-generic",
+    "html5": "text-html",
+    "slideshow": "image-x-generic",
+}
+
+
+class Command(BaseCommand):
+    """
+    Runs a GNOME search provider D-Bus service to find results in Kolibri.
+    """
+
+    def handle(self, *args, **options):
+        SearchService()
+        GLib.MainLoop().run()
+
+
+def get_search_result_ids(terms):
+    request = APIRequestFactory().get("", {"search": terms, "max_results": 10})
+    search_view = ContentNodeSearchViewset.as_view({"get": "list"})
+    response = search_view(request)
+    return [
+        ("t/" if result["kind"] == "topic" else "c/") + result["id"]
+        for result in response.data["results"]
+    ]
+
+
+dbus_args = {"dbus_interface": "org.gnome.Shell.SearchProvider2"}
+
+
+class SearchService(dbus.service.Object):
+
+    bus_name = "org.learningequality.Kolibri.SearchProvider"
+    _object_path = "/" + bus_name.replace(".", "/")
+
+    def __init__(self):
+        self.session_bus = dbus.SessionBus()
+        bus_name = dbus.service.BusName(self.bus_name, bus=self.session_bus)
+        self.launcher = self.session_bus.get_object(
+            "org.learningequality.Kolibri", "/org/learningequality/Kolibri"
+        )
+        super().__init__(bus_name, self._object_path)
+
+    @dbus.service.method(in_signature="sasu", **dbus_args)
+    def ActivateResult(self, item_id, terms, timestamp):
+        self.launcher.Open([item_id], {"terms": terms})
+
+    @dbus.service.method(in_signature="as", out_signature="as", **dbus_args)
+    def GetInitialResultSet(self, terms):
+        return get_search_result_ids(terms)
+
+    @dbus.service.method(in_signature="asas", out_signature="as", **dbus_args)
+    def GetSubsearchResultSet(self, previous_results, new_terms):
+        return get_search_result_ids(new_terms)
+
+    @dbus.service.method(in_signature="as", out_signature="aa{sv}", **dbus_args)
+    def GetResultMetas(self, ids):
+        results = []
+        for item_id in ids:
+            node = ContentNode.objects.get(id=item_id.split("/")[-1])
+            results.append(
+                {
+                    "id": item_id,
+                    "name": node.title,
+                    "description": node.description,
+                    "gicon": ICON_LOOKUP.get(node.kind, "application-x-executable"),
+                }
+            )
+        return results
+
+    @dbus.service.method(in_signature="asu", terms="as", timestamp="u", **dbus_args)
+    def LaunchSearch(self, terms, timestamp):
+        self.launcher.Open([""], {"terms": terms})

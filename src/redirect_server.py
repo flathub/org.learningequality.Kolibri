@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import fcntl
 import http.server
 import io
@@ -16,6 +15,7 @@ from contextlib import closing
 from kolibri.utils import conf
 from kolibri.utils import server
 from kolibri.utils import cli
+from urllib.parse import urlparse, parse_qs
 
 REDIRECT_PORT = int(os.environ.get("REDIRECT_PORT", 8081))
 IDLE_TIMEOUT_MINS = int(os.environ.get("IDLE_TIMEOUT_MINS", 20))
@@ -61,8 +61,10 @@ class RedirectHandler(http.server.SimpleHTTPRequestHandler):
             return self.redirect(port)
 
     def redirect(self, port):
+        path = parse_qs(urlparse(self.path).query).get("next", [""])[0]
+        url = "http://127.0.0.1:{}{}".format(port, path)
         self.send_response(302)
-        self.send_header("Location", "http://127.0.0.1:{}/".format(port))
+        self.send_header("Location", url)
         self.end_headers()
 
 
