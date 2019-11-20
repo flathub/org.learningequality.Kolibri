@@ -1,15 +1,63 @@
---- kolibri-0.12.8/kolibri/core/templates/kolibri/base.html	2019-10-30 16:47:43.825732778 -0700
-+++ kolibri-0.12.8/kolibri/core/templates/kolibri/base.html	2019-10-30 16:48:16.349964475 -0700
-@@ -27,6 +27,12 @@
+From 95399a09dddae235bd354d36e330395e195b9cd4 Mon Sep 17 00:00:00 2001
+From: Dylan McCall <dylan@endlessm.com>
+Date: Wed, 20 Nov 2019 14:38:47 -0800
+Subject: [PATCH] Periodically poll a heartbeat URL if set
+
+---
+ .../context_processors/custom_context_processor.py    |  5 +++++
+ kolibri/core/templates/kolibri/base.html              | 11 +++++++++++
+ kolibri/deployment/default/settings/base.py           |  1 +
+ 3 files changed, 17 insertions(+)
+
+diff --git a/kolibri/core/context_processors/custom_context_processor.py b/kolibri/core/context_processors/custom_context_processor.py
+index 088dfe84a..882a4257c 100644
+--- a/kolibri/core/context_processors/custom_context_processor.py
++++ b/kolibri/core/context_processors/custom_context_processor.py
+@@ -1,5 +1,10 @@
+ from django.conf import settings
++import os
+ 
+ 
+ def developer_mode(request):
+     return {"developer_mode": getattr(settings, "DEVELOPER_MODE", False)}
++
++
++def heartbeat_port(request):
++    return {"heartbeat_port": os.environ.get("KOLIBRI_HEARTBEAT_PORT")}
+diff --git a/kolibri/core/templates/kolibri/base.html b/kolibri/core/templates/kolibri/base.html
+index 3319ab244..4498ab4e6 100644
+--- a/kolibri/core/templates/kolibri/base.html
++++ b/kolibri/core/templates/kolibri/base.html
+@@ -27,6 +27,17 @@
    {% kolibri_theme %}
    {% kolibri_set_urls %}
    {% webpack_asset 'user_agent' %}
-+  <script>
-+    var newImage = new Image();
-+    setInterval(function() {
-+      newImage.src = "http://127.0.0.1:" + (parseInt(location.port) + 1) + "/heartbeat.png?" + new Date().getTime();
-+    }, 30000);
-+  </script>
++  {% if heartbeat_port %}
++    <script>
++      var callbackURL = new URL('/', location);
++      callbackURL.port = "{{ heartbeat_port }}";
++      callbackURL.search = new Date().getTime();
++      var newImage = new Image();
++        setInterval(function() {
++          newImage.src = callbackURL.href;
++        }, 30000);
++    </script>
++  {% endif %}
  </head>
  <body>
  <rootvue>
+diff --git a/kolibri/deployment/default/settings/base.py b/kolibri/deployment/default/settings/base.py
+index 15685e5e5..ed930812d 100644
+--- a/kolibri/deployment/default/settings/base.py
++++ b/kolibri/deployment/default/settings/base.py
+@@ -121,6 +121,7 @@ TEMPLATES = [
+                 "django.contrib.auth.context_processors.auth",
+                 "django.contrib.messages.context_processors.messages",
+                 "kolibri.core.context_processors.custom_context_processor.developer_mode",
++                "kolibri.core.context_processors.custom_context_processor.heartbeat_port",
+             ]
+         },
+     }
+-- 
+2.23.0
+
