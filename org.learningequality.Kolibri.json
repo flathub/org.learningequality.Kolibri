@@ -100,13 +100,13 @@
       "build-commands": [
         "install -Dm644 org.learningequality.Kolibri.metainfo.xml /app/share/metainfo/org.learningequality.Kolibri.metainfo.xml",
         "install -Dm644 org.learningequality.Kolibri.desktop /app/share/applications/org.learningequality.Kolibri.desktop",
-        "install -Dm644 icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-256.png /app/share/icons/hicolor/256x256/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-512.png /app/share/icons/hicolor/512x512/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
-        "install -Dm644 org.learningequality.Kolibri.service /app/share/dbus-1/services/org.learningequality.Kolibri.service",
-        "install -Dm644 org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
+        "install -Dm644 icons/icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icons/icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icons/icon-256.png /app/share/icons/hicolor/256x256/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icons/icon-512.png /app/share/icons/hicolor/512x512/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 gnome-shell/search-providers/org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
+        "install -Dm644 dbus-1/services/org.learningequality.Kolibri.service /app/share/dbus-1/services/org.learningequality.Kolibri.service",
+        "install -Dm644 dbus-1/services/org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
       ],
       "sources": [
         {
