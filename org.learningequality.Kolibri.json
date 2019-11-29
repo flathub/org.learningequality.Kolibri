@@ -7,7 +7,7 @@
     "--share=network",
     "--persist=.kolibri"
   ],
-  "command": "open_kolibri.sh",
+  "command": "run_kolibri",
   "modules": [
     "shared-modules/dbus-glib/dbus-glib-0.110.json",
     {
@@ -77,15 +77,21 @@
       "name": "helper_scripts",
       "buildsystem": "simple",
       "build-commands": [
-        "install -D envvars.sh /app/bin/envvars.sh",
-        "install -D run_kolibri.sh /app/bin/run_kolibri.sh",
-        "install -D open_kolibri.sh /app/bin/open_kolibri.sh",
-        "install -D kolibri_activation_service.sh /app/bin/kolibri_activation_service.sh",
-        "install -D kolibri_search_service.sh /app/bin/kolibri_search_service.sh",
-        "install -D check_for_running_tasks.sh /app/bin/check_for_running_tasks.sh",
-        "install -D redirect_server.py /app/www/redirect_server.py",
-        "install -D index.htm /app/www/index.htm",
-        "install -D heartbeat.png /app/www/heartbeat.png"
+        "pip3 install --prefix=/app ."
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "src/python-kolibri-flatpak-utils/"
+        }
+      ]
+    },
+    {
+      "name": "helper_scripts_data",
+      "buildsystem": "simple",
+      "build-commands": [
+        "install -D bin/* -t /app/bin",
+        "install -D www/* -t /app/www"
       ],
       "sources": [
         {
