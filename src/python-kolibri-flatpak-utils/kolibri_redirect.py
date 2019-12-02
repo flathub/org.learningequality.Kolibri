@@ -24,7 +24,11 @@ class KolibriRedirectThread(threading.Thread):
     def __init__(self):
         self.__running = None
 
+        kolibri_responding_event = threading.Event()
+        self.__kolibri_poller_thread = KolibriPoller(kolibri_responding_event)
+
         self.__redirect_server = socketserver.TCPServer(("", 0), RedirectHandler)
+        self.__redirect_server.kolibri_responding_event = kolibri_responding_event
         self.__redirect_server.last_heartbeat = time.time()
 
         self.__redirect_server_thread = threading.Thread(
@@ -51,6 +55,7 @@ class KolibriRedirectThread(threading.Thread):
 
     def start(self):
         self.__running = True
+        self.__kolibri_poller_thread.start()
         self.__redirect_server_thread.start()
         self.__start_event.set()
         super().start()
@@ -74,18 +79,26 @@ class KolibriRedirectThread(threading.Thread):
                 self.__running = False
 
 
-class RedirectHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        kwargs['directory'] = WWW_DIR
-        super().__init__(*args, **kwargs)
+class KolibriPoller(threading.Thread):
+    def __init__(self, kolibri_responding_event):
+        self.__kolibri_responding_event = kolibri_responding_event
+        super().__init__(daemon=True)
 
-    def do_GET(self):
-        self.server.last_heartbeat = time.time()
+    def start(self):
+        self.__running = True
+        super().start()
 
-        url = urlparse(self.path)
+    def stop(self):
+        self.__running = False
+        self.join()
 
-        if url.path == '/' or url.path == '/poll':
+    def run(self):
+        while self.__running and not self.__kolibri_responding_event.is_set():
             is_kolibri_responding = get_is_kolibri_responding()
+
+            if is_kolibri_responding:
+                self.__kolibri_responding_event.set()
+
             # if not is_kolibri_responding:
             #     # kolibri_started, kolibri_state = get_singleton_service('kolibri')
             #     # if kolibri_started:
@@ -93,13 +106,34 @@ class RedirectHandler(http.server.SimpleHTTPRequestHandler):
             #     #     print("It is responding at '{}'. We expect it to be at '{}'.".format(
             #     #         kolibri_state, KOLIBRI_URL
             #     #     ))
-        else:
-            is_kolibri_responding = None
 
-        if url.path == '/' and is_kolibri_responding:
+            time.sleep(2)
+
+
+class RedirectHandler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        kwargs['directory'] = WWW_DIR
+        super().__init__(*args, **kwargs)
+
+    def __get_kolibri_responding(self):
+        return self.server.kolibri_responding_event.is_set()
+
+    def __wait_kolibri_responding(self, timeout=None):
+        return self.server.kolibri_responding_event.wait(timeout=timeout)
+
+    def __do_heartbeat(self):
+        self.server.last_heartbeat = time.time()
+
+    def do_GET(self):
+        url = urlparse(self.path)
+
+        self.__do_heartbeat()
+
+        if url.path == '/' and self.__get_kolibri_responding():
             next_path = parse_qs(url.query).get('next', [''])[0]
             return self.redirect_response(next_path)
         elif url.path == '/poll':
+            is_kolibri_responding = self.__wait_kolibri_responding()
             return self.poll_response(is_kolibri_responding)
         else:
             return super().do_GET()
