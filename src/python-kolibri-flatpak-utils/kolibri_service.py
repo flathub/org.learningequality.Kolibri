@@ -46,19 +46,24 @@ class KolibriServiceThread(threading.Thread):
         status = server.get_urls()[0]
         print("Kolibri status ({}): {}".format(status, cli.status.codes[status]))
 
+        popen_args = {
+            'env': self.__kolibri_env,
+            'close_fds': False
+        }
+
         if status in [server.STATUS_STOPPED, server.STATUS_FAILED_TO_START, server.STATUS_UNKNOWN]:
-            print("Starting Kolibri!")
-            process = subprocess.Popen(["kolibri", "start", "--foreground"], env=self.__kolibri_env)
+            print("Starting Kolibri...")
+            process = subprocess.Popen(["kolibri", "start", "--foreground"], **popen_args)
         elif status in [server.STATUS_NOT_RESPONDING]:
-            print("Restarting Kolibri!")
-            process = subprocess.Popen(["kolibri", "restart"], env=self.__kolibri_env)
+            print("Restarting Kolibri...")
+            process = subprocess.Popen(["kolibri", "restart"], **popen_args)
         elif status in [server.STATUS_UNCLEAN_SHUTDOWN, server.STATUS_FAILED_TO_START]:
-            print("Clearing lock files and starting Kolibri!")
+            print("Clearing lock files and starting Kolibri...")
             if os.path.exists(server.STARTUP_LOCK):
                 os.remove(server.STARTUP_LOCK)
             if os.path.exists(server.PID_FILE):
                 os.remove(server.PID_FILE)
-            process = subprocess.Popen(["kolibri", "start", "--foreground"], env=self.__kolibri_env)
+            process = subprocess.Popen(["kolibri", "start", "--foreground"], **popen_args)
         else:
             print("Warning: not starting Kolibri.")
             process = None

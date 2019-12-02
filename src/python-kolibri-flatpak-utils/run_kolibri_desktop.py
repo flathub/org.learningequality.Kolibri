@@ -8,7 +8,7 @@ from .kolibri_service import KolibriServiceThread
 from .utils import is_kolibri_socket_open
 
 
-def kolibri_desktop_main(path=None):
+def kolibri_desktop_main(path='/'):
     if is_kolibri_socket_open():
         return _run_desktop(path)
     else:

@@ -8,18 +8,20 @@ from .run_kolibri_service import kolibri_service_main
 
 def main():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest='subparser', required=True)
+    subcommands = parser.add_subparsers(dest='subcommand', required=False)
 
-    desktop_parser = subparsers.add_parser('desktop')
+    desktop_parser = subcommands.add_parser('desktop')
     desktop_parser.add_argument('path', nargs='?', type=str, default='/')
 
-    service_parser = subparsers.add_parser('service')
+    service_parser = subcommands.add_parser('service')
 
     options = parser.parse_args()
 
-    if options.subparser == 'desktop':
+    if options.subcommand is None:
+        return kolibri_desktop_main()
+    elif options.subcommand == 'desktop':
         return kolibri_desktop_main(options.path)
-    elif options.subparser == 'service':
+    elif options.subcommand == 'service':
         return kolibri_service_main()
     else:
         print("Error: Invalid subcommand")
