@@ -70,6 +70,10 @@
         {
           "type": "patch",
           "path": "patches/gnome_search_provider_service.py.patch"
+        },
+        {
+          "type": "patch",
+          "path": "patches/kolibri_remove_sanity_check_for_port_availability.patch"
         }
       ]
     },
