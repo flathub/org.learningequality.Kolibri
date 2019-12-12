@@ -2,9 +2,7 @@
 
 import subprocess
 
-from .kolibri_idle_monitor import KolibriIdleMonitorThread
 from .kolibri_redirect import KolibriRedirectThread
-from .kolibri_service import KolibriServiceThread
 from .utils import is_kolibri_socket_open
 
 
@@ -38,6 +36,10 @@ def _run_desktop(path):
 
 def _run_desktop_and_service(path):
     # Start our own Kolibri instances
+
+    from .kolibri_idle_monitor import KolibriIdleMonitorThread
+    from .kolibri_service import KolibriServiceThread
+
     kolibri_idle_monitor = KolibriIdleMonitorThread()
     kolibri_service = KolibriServiceThread(
         heartbeat_port=kolibri_idle_monitor.idle_monitor_port

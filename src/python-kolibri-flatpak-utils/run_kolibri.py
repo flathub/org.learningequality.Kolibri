@@ -2,9 +2,6 @@
 
 import argparse
 
-from .run_kolibri_desktop import kolibri_desktop_main
-from .run_kolibri_service import kolibri_service_main
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,11 +14,12 @@ def main():
 
     options = parser.parse_args()
 
-    if options.subcommand is None:
-        return kolibri_desktop_main()
-    elif options.subcommand == 'desktop':
-        return kolibri_desktop_main(options.path)
+    if options.subcommand is None or options.subcommand == 'desktop':
+        from .run_kolibri_desktop import kolibri_desktop_main
+        path = getattr(options, 'path', None)
+        return kolibri_desktop_main(path)
     elif options.subcommand == 'service':
+        from .run_kolibri_service import kolibri_service_main
         return kolibri_service_main()
     else:
         print("Error: Invalid subcommand")
