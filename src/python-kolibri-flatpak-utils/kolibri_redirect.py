@@ -9,10 +9,9 @@ import socketserver
 import threading
 import time
 
-from kolibri.utils import server
-from urllib.parse import urlparse, parse_qs, quote
+from urllib.parse import urlparse, parse_qs
 
-from .utils import KOLIBRI_URL, get_singleton_service, get_is_kolibri_responding
+from .utils import KOLIBRI_URL, get_is_kolibri_responding
 
 
 WWW_DIR = '/app/www'

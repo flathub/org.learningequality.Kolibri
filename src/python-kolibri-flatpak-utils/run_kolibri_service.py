@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import sys
-
 from .kolibri_idle_monitor import KolibriIdleMonitorThread
 from .kolibri_service import KolibriServiceThread
 

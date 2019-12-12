@@ -2,15 +2,11 @@
 
 # Starts Kolibri, recovering from improper exits if required.
 
-import fcntl
 import io
 import os
-import requests
-import socket
 import subprocess
 import threading
 
-from kolibri.utils import conf
 from kolibri.utils import server
 from kolibri.utils import cli
 
