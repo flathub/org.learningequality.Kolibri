@@ -17,7 +17,18 @@ XDG_DATA_HOME = os.environ.get('XDG_DATA_HOME', None)
 KOLIBRI_IDLE_TIMEOUT_MINS = int(os.environ.get("KOLIBRI_IDLE_TIMEOUT_MINS", 60))
 KOLIBRI_IDLE_TIMEOUT_SECS = KOLIBRI_IDLE_TIMEOUT_MINS * 60
 
-KOLIBRI_HTTP_PORT = int(os.environ.get("KOLIBRI_HTTP_PORT", 8080))
+# Get KOLIBRI_HTTP_PORT from kolibri.utils.conf if needed.
+# This will fail in an environment where Kolibri is supposed to run as a
+# separate user due to code in kolibri.utils.conf which requires access to
+# KOLIBRI_HOME. For that case, we check for the environment variable
+# ourselves.
+
+if 'KOLIBRI_HTTP_PORT' in os.environ:
+    KOLIBRI_HTTP_PORT = int(os.environ.get("KOLIBRI_HTTP_PORT"))
+else:
+    from kolibri.utils.conf import OPTIONS
+    KOLIBRI_HTTP_PORT = OPTIONS["Deployment"]["HTTP_PORT"]
+
 KOLIBRI_URL = "http://127.0.0.1:{}".format(KOLIBRI_HTTP_PORT)
 
 
