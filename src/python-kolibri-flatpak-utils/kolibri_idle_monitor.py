@@ -80,5 +80,4 @@ class KolibriIdleMonitorThread(threading.Thread):
 class CallbackHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.server.last_heartbeat = time.time()
-        health = {'status': 'ok'}
         self.send_response(200)
