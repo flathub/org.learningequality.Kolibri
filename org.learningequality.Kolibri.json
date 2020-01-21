@@ -56,8 +56,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://files.pythonhosted.org/packages/3d/f1/950058edaf24009d35729ed88cc5da480e34f911cdc3a5a0f7de49ce1707/kolibri-0.12.8.tar.gz",
-          "sha256": "a60488472c85a83baf3faa1fd94b47a86486830069c0b7fc3acb376234acf7f6"
+          "url": "https://files.pythonhosted.org/packages/e4/7d/a2dfc584ff455fc9794c323516b9faedfc94098a0bde18a471cda0cb9559/kolibri-0.13.0.tar.gz",
+          "sha256": "0889c130d37e82ce1398eb277d2e677d13f6007dcef7bc2cd023e155c2c82ffc"
         },
         {
           "type": "patch",

@@ -11,6 +11,6 @@ setup(
     },
     python_requires='>=3.4',
     install_requires=[
-        'kolibri>=0.12.8'
+        'kolibri>=0.13.0'
     ]
 )
