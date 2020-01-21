@@ -61,7 +61,9 @@ class KolibriServiceThread(threading.Thread):
                 os.remove(server.PID_FILE)
             process = subprocess.Popen(["kolibri", "start", "--foreground"], **popen_args)
         else:
-            print("Warning: not starting Kolibri.")
+            print("Warning: not starting Kolibri because its status is ({}): {}".format(
+                status, cli.status.codes[status]
+            ))
             process = None
 
         if process:
