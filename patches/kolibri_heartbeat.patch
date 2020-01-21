@@ -1,4 +1,4 @@
-From 95399a09dddae235bd354d36e330395e195b9cd4 Mon Sep 17 00:00:00 2001
+From 55706d3fbb28ff967817072c1e08035fd5b8466c Mon Sep 17 00:00:00 2001
 From: Dylan McCall <dylan@endlessm.com>
 Date: Wed, 20 Nov 2019 14:38:47 -0800
 Subject: [PATCH] Periodically poll a heartbeat URL if set
@@ -25,7 +25,7 @@ index 088dfe84a..882a4257c 100644
 +def heartbeat_port(request):
 +    return {"heartbeat_port": os.environ.get("KOLIBRI_HEARTBEAT_PORT")}
 diff --git a/kolibri/core/templates/kolibri/base.html b/kolibri/core/templates/kolibri/base.html
-index 3319ab244..4498ab4e6 100644
+index 3319ab244..ebd3a0e36 100644
 --- a/kolibri/core/templates/kolibri/base.html
 +++ b/kolibri/core/templates/kolibri/base.html
 @@ -27,6 +27,17 @@
@@ -36,11 +36,11 @@ index 3319ab244..4498ab4e6 100644
 +    <script>
 +      var callbackURL = new URL('/', location);
 +      callbackURL.port = "{{ heartbeat_port }}";
-+      callbackURL.search = new Date().getTime();
 +      var newImage = new Image();
-+        setInterval(function() {
-+          newImage.src = callbackURL.href;
-+        }, 30000);
++      setInterval(function() {
++        callbackURL.search = new Date().getTime();
++        newImage.src = callbackURL.href;
++      }, 30000);
 +    </script>
 +  {% endif %}
  </head>
@@ -59,5 +59,5 @@ index 15685e5e5..ed930812d 100644
          },
      }
 -- 
-2.23.0
+2.24.1
 
