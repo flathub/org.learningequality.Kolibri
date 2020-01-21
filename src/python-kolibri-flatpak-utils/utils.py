@@ -32,27 +32,6 @@ def singleton_service(service='kolibri', state=''):
             yield
 
 
-def get_singleton_service(service):
-    lockfile_path = os.path.join(XDG_DATA_HOME, "{}.lock".format(service))
-
-    try:
-        lockfile = open(lockfile_path, "r")
-    except OSError:
-        state = None
-        is_started = False
-    else:
-        state = lockfile.read()
-        try:
-            with _flocked(lockfile):
-                pass
-        except io.BlockingIOError:
-            is_started = True
-        else:
-            is_started = False
-
-    return is_started, state
-
-
 def is_kolibri_socket_open():
     with socket.socket() as sock:
         return sock.connect_ex(("127.0.0.1", KOLIBRI_HTTP_PORT)) == 0

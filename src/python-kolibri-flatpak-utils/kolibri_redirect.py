@@ -93,18 +93,12 @@ class KolibriPoller(threading.Thread):
 
     def run(self):
         while self.__running and not self.__kolibri_responding_event.is_set():
-            is_kolibri_responding = get_is_kolibri_responding()
-
-            if is_kolibri_responding:
+            if get_is_kolibri_responding():
                 self.__kolibri_responding_event.set()
 
-            # if not is_kolibri_responding:
-            #     # kolibri_started, kolibri_state = get_singleton_service('kolibri')
-            #     # if kolibri_started:
-            #     #     print("Error: Kolibri appears to be started, but not responding.")
-            #     #     print("It is responding at '{}'. We expect it to be at '{}'.".format(
-            #     #         kolibri_state, KOLIBRI_URL
-            #     #     ))
+            # There is a corner case here where Kolibri may be running (lock
+            # file is created), but responding at a different URL than we
+            # expect. This is very unlikely, so we are ignoring it here.
 
             time.sleep(2)
 
