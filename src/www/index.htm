@@ -316,6 +316,8 @@
           } else if (kolibri_location) {
             var new_location = new URL(next, kolibri_location);
             document.location = new_location.href;
+          } else {
+            console.warn("Unable to redirect: X-Kolibri-Location is not set");
           }
         }
         req.ontimeout = function() {
