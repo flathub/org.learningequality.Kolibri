@@ -2,6 +2,7 @@
 
 import fcntl
 import io
+import json
 import os
 import socket
 import subprocess
@@ -38,17 +39,22 @@ def is_kolibri_socket_open():
 
 
 def get_is_kolibri_responding():
-    # Check if Kolibri is responding to http requests at the provided URL.
-
-    # TODO: It would be nice to have a status API we can query to confirm this
-    #       is indeed Kolibri.
+    # Check if Kolibri is responding to http requests at the expected URL.
 
     try:
-        result = urllib.request.urlopen('{}/api/auth'.format(KOLIBRI_URL))
+        response = urllib.request.urlopen('{}/api/public/info'.format(KOLIBRI_URL))
     except URLError:
         return False
-    else:
-        return result.status == 200
+
+    if response.status != 200:
+        return False
+
+    try:
+        data = json.load(response)
+    except json.JSONDecodeError:
+        return False
+
+    return data.get('application') == 'kolibri'
 
 
 def get_kolibri_running_tasks():
