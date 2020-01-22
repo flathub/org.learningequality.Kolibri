@@ -6,7 +6,10 @@ from .kolibri_redirect import KolibriRedirectThread
 from .utils import is_kolibri_socket_open
 
 
-def kolibri_desktop_main(path='/'):
+def kolibri_desktop_main(path=None):
+    if path is None:
+        path = '/'
+
     if is_kolibri_socket_open():
         return _run_desktop(path)
     else:
@@ -16,6 +19,7 @@ def kolibri_desktop_main(path='/'):
 def _run_desktop(path):
     kolibri_redirect = KolibriRedirectThread()
 
+    print("Starting Kolibri redirect...")
     kolibri_redirect.start()
 
     kolibri_redirect.await_started()
@@ -24,14 +28,14 @@ def _run_desktop(path):
         port=kolibri_redirect.redirect_server_port,
         path=path
     )
-    result = subprocess.run(['xdg-open', kolibri_redirect_url])
 
-    if result.returncode == 0:
-        kolibri_redirect.join()
-    else:
-        kolibri_redirect.stop()
+    print("Opening <{}>...".format(kolibri_redirect_url))
+    xdg_open_process = subprocess.run(['xdg-open', kolibri_redirect_url])
 
-    return result.returncode
+    kolibri_redirect.join()
+    print("Kolibri redirect stopped.")
+
+    return xdg_open_process.returncode
 
 
 def _run_desktop_and_service(path):
@@ -48,8 +52,11 @@ def _run_desktop_and_service(path):
 
     kolibri_redirect = KolibriRedirectThread()
     
+    print("Starting Kolibri idle monitor...")
     kolibri_idle_monitor.start()
+    print("Starting Kolibri service...")
     kolibri_service.start()
+    print("Starting Kolibri redirect...")
     kolibri_redirect.start()
 
     kolibri_redirect.await_started()
@@ -58,17 +65,15 @@ def _run_desktop_and_service(path):
         port=kolibri_redirect.redirect_server_port,
         path=path
     )
-    result = subprocess.run(['xdg-open', kolibri_redirect_url])
 
-    if result.returncode == 0:
-        kolibri_service.join()
-    else:
-        kolibri_service.stop()
+    print("Opening <{}>...".format(kolibri_redirect_url))
+    subprocess.run(['xdg-open', kolibri_redirect_url])
 
+    kolibri_service.join()
+    print("Kolibri service stopped.")
     kolibri_redirect.stop()
+    print("Kolibri redirect stopped.")
     kolibri_idle_monitor.stop()
+    print("Kolibri idle monitor stopped.")
 
-    if result.returncode == 0:
-        return kolibri_service.kolibri_exitcode
-    else:
-        return result.returncode
+    return kolibri_service.kolibri_exitcode
