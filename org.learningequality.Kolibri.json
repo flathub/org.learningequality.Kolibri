@@ -7,7 +7,7 @@
     "--share=network",
     "--persist=.kolibri"
   ],
-  "command": "run_kolibri",
+  "command": "open_kolibri.sh",
   "modules": [
     "shared-modules/dbus-glib/dbus-glib-0.110.json",
     {
@@ -56,8 +56,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://files.pythonhosted.org/packages/e4/7d/a2dfc584ff455fc9794c323516b9faedfc94098a0bde18a471cda0cb9559/kolibri-0.13.0.tar.gz",
-          "sha256": "0889c130d37e82ce1398eb277d2e677d13f6007dcef7bc2cd023e155c2c82ffc"
+          "url": "https://files.pythonhosted.org/packages/3d/f1/950058edaf24009d35729ed88cc5da480e34f911cdc3a5a0f7de49ce1707/kolibri-0.12.8.tar.gz",
+          "sha256": "a60488472c85a83baf3faa1fd94b47a86486830069c0b7fc3acb376234acf7f6"
         },
         {
           "type": "patch",
@@ -70,10 +70,6 @@
         {
           "type": "patch",
           "path": "patches/gnome_search_provider_service.py.patch"
-        },
-        {
-          "type": "patch",
-          "path": "patches/kolibri_remove_sanity_check_for_port_availability.patch"
         }
       ]
     },
@@ -81,21 +77,15 @@
       "name": "helper_scripts",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --prefix=/app ."
-      ],
-      "sources": [
-        {
-          "type": "dir",
-          "path": "src/python-kolibri-flatpak-utils/"
-        }
-      ]
-    },
-    {
-      "name": "helper_scripts_data",
-      "buildsystem": "simple",
-      "build-commands": [
-        "install -D bin/* -t /app/bin",
-        "install -D www/* -t /app/www"
+        "install -D envvars.sh /app/bin/envvars.sh",
+        "install -D run_kolibri.sh /app/bin/run_kolibri.sh",
+        "install -D open_kolibri.sh /app/bin/open_kolibri.sh",
+        "install -D kolibri_activation_service.sh /app/bin/kolibri_activation_service.sh",
+        "install -D kolibri_search_service.sh /app/bin/kolibri_search_service.sh",
+        "install -D check_for_running_tasks.sh /app/bin/check_for_running_tasks.sh",
+        "install -D redirect_server.py /app/www/redirect_server.py",
+        "install -D index.htm /app/www/index.htm",
+        "install -D heartbeat.png /app/www/heartbeat.png"
       ],
       "sources": [
         {
@@ -110,13 +100,13 @@
       "build-commands": [
         "install -Dm644 org.learningequality.Kolibri.metainfo.xml /app/share/metainfo/org.learningequality.Kolibri.metainfo.xml",
         "install -Dm644 org.learningequality.Kolibri.desktop /app/share/applications/org.learningequality.Kolibri.desktop",
-        "install -Dm644 icons/icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icons/icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icons/icon-256.png /app/share/icons/hicolor/256x256/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icons/icon-512.png /app/share/icons/hicolor/512x512/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 gnome-shell/search-providers/org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
-        "install -Dm644 dbus-1/services/org.learningequality.Kolibri.service /app/share/dbus-1/services/org.learningequality.Kolibri.service",
-        "install -Dm644 dbus-1/services/org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
+        "install -Dm644 icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icon-256.png /app/share/icons/hicolor/256x256/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 icon-512.png /app/share/icons/hicolor/512x512/apps/org.learningequality.Kolibri.png",
+        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
+        "install -Dm644 org.learningequality.Kolibri.service /app/share/dbus-1/services/org.learningequality.Kolibri.service",
+        "install -Dm644 org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
       ],
       "sources": [
         {
