@@ -1,5 +1,5 @@
---- /dev/null	2019-11-07 08:53:04.471987251 -0800
-+++ kolibri-0.12.8/kolibri/core/content/management/commands/dbus_activation_service.py	2019-11-08 16:34:21.992473978 -0800
+--- /dev/null	2020-01-15 16:23:33.191645651 -0800
++++ patches/sources/dbus_activation_service.py	2020-01-14 14:41:20.882446125 -0800
 @@ -0,0 +1,79 @@
 +import dbus
 +import dbus.glib
@@ -42,9 +42,9 @@
 +
 +def _get_command(url=None):
 +    if url:
-+        return "/app/bin/open_kolibri.sh '{}'".format(url)
++        return "run_kolibri desktop '{}'".format(url)
 +    else:
-+        return ""
++        return "run_kolibri desktop"
 +
 +
 +dbus_args = {"dbus_interface": "org.freedesktop.Application"}

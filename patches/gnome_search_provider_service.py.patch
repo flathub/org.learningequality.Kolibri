@@ -1,5 +1,5 @@
---- /dev/null	2019-11-07 08:53:04.471987251 -0800
-+++ kolibri-0.12.8/kolibri/core/content/management/commands/gnome_search_provider_service.py	2019-11-08 16:34:14.360538724 -0800
+--- /dev/null	2020-01-15 16:23:33.191645651 -0800
++++ patches/sources/gnome_search_provider_service.py	2020-01-14 14:41:20.882446125 -0800
 @@ -0,0 +1,89 @@
 +import dbus
 +import dbus.glib

@@ -5,5 +5,5 @@ Name=Kolibri
 Comment=Offline education technology platform
 Keywords=education;multimedia;videos;learning;quiz;
 Categories=Education;
-Exec=open_kolibri.sh
+Exec=run_kolibri desktop
 Icon=org.learningequality.Kolibri
