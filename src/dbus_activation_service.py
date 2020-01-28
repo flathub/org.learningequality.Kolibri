@@ -39,9 +39,9 @@ def _get_url(terms, target_id):
 
 def _get_command(url=None):
     if url:
-        return "run_kolibri desktop '{}'".format(url)
+        return "/app/bin/open_kolibri.sh '{}'".format(url)
     else:
-        return "run_kolibri desktop"
+        return ""
 
 
 dbus_args = {"dbus_interface": "org.freedesktop.Application"}
