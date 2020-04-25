@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.learningequality.Kolibri
-Exec=/app/bin/kolibri_activation_service.sh

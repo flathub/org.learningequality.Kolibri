@@ -1,127 +1,81 @@
 {
-  "app-id": "org.learningequality.Kolibri",
-  "runtime": "org.gnome.Platform",
-  "runtime-version": "3.34",
-  "sdk": "org.gnome.Sdk",
-  "finish-args": [
-    "--share=network",
-    "--persist=.kolibri"
-  ],
-  "command": "open_kolibri.sh",
-  "modules": [
-    "shared-modules/dbus-glib/dbus-glib-0.110.json",
-    {
-      "name": "python-dbus",
-      "sources": [
+    "app-id" : "org.learningequality.Kolibri",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "3.36",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "run-kolibri-gnome.sh",
+    "finish-args" : [
+        "--device=dri",
+        "--share=ipc",
+        "--share=network",
+        "--socket=fallback-x11",
+        "--socket=pulseaudio",
+        "--socket=wayland",
+        "--socket=x11"
+    ],
+    "modules" : [
+        "python3-requests.json",
         {
-          "type": "archive",
-          "url": "https://pypi.python.org/packages/ad/1b/76adc363212c642cabbf9329457a918308c0b9b5d38ce04d541a67255174/dbus-python-1.2.4.tar.gz",
-          "sha256": "e2f1d6871f74fba23652e51d10873e54f71adab0525833c19bad9e99b1b2f9cc"
-        }
-      ],
-      "build-options": {
-        "env": {
-          "PYTHON": "python3.7"
-        }
-      }
-    },
-    {
-      "name": "pygobject",
-      "buildsystem": "simple",
-      "build-commands": [
-        "python3 setup.py install --prefix=/app"
-      ],
-      "ensure-writable": [
-        "/lib/python*/site-packages/easy-install.pth"
-      ],
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://download.gnome.org/sources/pygobject/3.34/pygobject-3.34.0.tar.xz",
-          "sha256": "87e2c9aa785f352ef111dcc5f63df9b85cf6e05e52ff04f803ffbebdacf5271a"
-        }
-      ],
-      "cleanup": [
-        "/include",
-        "/lib/pkgconfig",
-        "/lib/python*/site-packages/gi/*.la"
-      ]
-    },
-    {
-      "name": "kolibri",
-      "buildsystem": "simple",
-      "build-commands": [
-        "pip3 install --prefix=/app ."
-      ],
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://files.pythonhosted.org/packages/3d/f1/950058edaf24009d35729ed88cc5da480e34f911cdc3a5a0f7de49ce1707/kolibri-0.12.8.tar.gz",
-          "sha256": "a60488472c85a83baf3faa1fd94b47a86486830069c0b7fc3acb376234acf7f6"
+            "name" : "pyeverywhere",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "pip3 install --prefix=/app ."
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/dylanmccall/pyeverywhere.git",
+                    "branch" : "move-dependencies-to-extras",
+                    "commit" : "70f19355f6d9cf9168cd5410df6ec139072f4b30"
+                }
+            ]
         },
         {
-          "type": "patch",
-          "path": "patches/kolibri_heartbeat.patch"
+            "name" : "kolibri",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "pip3 install --prefix=/app ."
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://files.pythonhosted.org/packages/4d/37/4f043b3829a2ce0188956c5de45142405b041b7477b6b10f240d68406fce/kolibri-0.13.2rc1.tar.gz",
+                    "sha256" : "04aa7a7869a7febc3d0ce1824160d7b7ee3896f97940e11049e7601a117d09c9"
+                },
+                {
+                    "type" : "patch",
+                    "path" : "patches/kolibri_heartbeat.patch"
+                },
+                {
+                    "type" : "patch",
+                    "path" : "patches/kolibri_remove_sanity_check_for_port_availability.patch"
+                }
+            ]
         },
         {
-          "type": "patch",
-          "path": "patches/dbus_activation_service.py.patch"
+            "name" : "kolibri-installer-gnome",
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
+                    "branch" : "master",
+                    "commit" : "ca886e15989a9fef06742fff68f0b511e1f89592"
+                }
+            ]
         },
         {
-          "type": "patch",
-          "path": "patches/gnome_search_provider_service.py.patch"
+            "name" : "flatpak-helper-scripts",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "install -Dm755 run-kolibri-gnome.sh /app/bin/run-kolibri-gnome.sh"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "run-kolibri-gnome.sh"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "name": "helper_scripts",
-      "buildsystem": "simple",
-      "build-commands": [
-        "install -D envvars.sh /app/bin/envvars.sh",
-        "install -D run_kolibri.sh /app/bin/run_kolibri.sh",
-        "install -D open_kolibri.sh /app/bin/open_kolibri.sh",
-        "install -D kolibri_activation_service.sh /app/bin/kolibri_activation_service.sh",
-        "install -D kolibri_search_service.sh /app/bin/kolibri_search_service.sh",
-        "install -D check_for_running_tasks.sh /app/bin/check_for_running_tasks.sh",
-        "install -D redirect_server.py /app/www/redirect_server.py",
-        "install -D index.htm /app/www/index.htm",
-        "install -D heartbeat.png /app/www/heartbeat.png"
-      ],
-      "sources": [
-        {
-          "type": "dir",
-          "path": "src/"
-        }
-      ]
-    },
-    {
-      "name": "desktop",
-      "buildsystem": "simple",
-      "build-commands": [
-        "install -Dm644 org.learningequality.Kolibri.metainfo.xml /app/share/metainfo/org.learningequality.Kolibri.metainfo.xml",
-        "install -Dm644 org.learningequality.Kolibri.desktop /app/share/applications/org.learningequality.Kolibri.desktop",
-        "install -Dm644 icon-64.png /app/share/icons/hicolor/64x64/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-128.png /app/share/icons/hicolor/128x128/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-256.png /app/share/icons/hicolor/256x256/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 icon-512.png /app/share/icons/hicolor/512x512/apps/org.learningequality.Kolibri.png",
-        "install -Dm644 org.learningequality.Kolibri.ini /app/share/gnome-shell/search-providers/org.learningequality.Kolibri.ini",
-        "install -Dm644 org.learningequality.Kolibri.service /app/share/dbus-1/services/org.learningequality.Kolibri.service",
-        "install -Dm644 org.learningequality.Kolibri.SearchProvider.service /app/share/dbus-1/services/org.learningequality.Kolibri.SearchProvider.service"
-      ],
-      "sources": [
-        {
-          "type": "dir",
-          "path": "src/"
-        },
-        {
-          "type": "file",
-          "path": "org.learningequality.Kolibri.desktop"
-        },
-        {
-          "type": "file",
-          "path": "org.learningequality.Kolibri.metainfo.xml"
-        }
-      ]
-    }
-  ]
+    ]
 }

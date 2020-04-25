@@ -1,14 +1,17 @@
-# kolibri-installer-flatpak
+# Flatpak packaging for kolibri-installer-gnome
 
-## Build and install the flatpak locally
+This package contains [Kolibri](https://learningequality.org/kolibri/) as well
+as a GNOME front-end. To build and install this package on your system, use
+flatpak-builder…
 
-`make build`
+    flatpak-builder build-dir org.learningequality.Kolibri.json --install --user
 
-## Run Kolibri from within the flatpak
+Once it is installed, you can run Kolibri using
+`flatpak run org.learningequality.Kolibri`.
 
-`make start`
-(then, Kolibri will be launched in the default web browser at http://127.0.0.1:8080)
+Note that the Kolibri flatpak will use a different data directory than if it was
+running on the host system. Instead of being located in ~/.kolibri, Kolibri's
+database files will be stored in the Flatpak application's data directory, such
+as _~/.var/app/org.learningequality.Kolibri/data/kolibri_. This can be changed
+as usual by setting the _$KOLIBRI_HOME_ environment variable.
 
-## Stop the flatpak Kolibri service (ungracefully)
-
-`make stop`
