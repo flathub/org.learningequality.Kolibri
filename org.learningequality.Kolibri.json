@@ -3,7 +3,7 @@
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "3.36",
     "sdk" : "org.gnome.Sdk",
-    "command" : "run-kolibri-gnome.sh",
+    "command" : "kolibri-gnome",
     "finish-args" : [
         "--device=dri",
         "--share=ipc",
@@ -60,20 +60,7 @@
                     "type" : "git",
                     "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch" : "master",
-                    "commit" : "ca886e15989a9fef06742fff68f0b511e1f89592"
-                }
-            ]
-        },
-        {
-            "name" : "flatpak-helper-scripts",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "install -Dm755 run-kolibri-gnome.sh /app/bin/run-kolibri-gnome.sh"
-            ],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "run-kolibri-gnome.sh"
+                    "commit" : "170ae9c5811607f03a45028b0a5e45a1ab18029f"
                 }
             ]
         }
