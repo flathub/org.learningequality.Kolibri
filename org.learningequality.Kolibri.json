@@ -24,9 +24,9 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://github.com/dylanmccall/pyeverywhere.git",
-                    "branch" : "move-dependencies-to-extras",
-                    "commit" : "70f19355f6d9cf9168cd5410df6ec139072f4b30"
+                    "url" : "https://github.com/kollivier/pyeverywhere.git",
+                    "branch" : "dev",
+                    "commit" : "18b280ba756e3db9eb96891ea01eab00ef776311"
                 }
             ]
         },
@@ -60,7 +60,7 @@
                     "type" : "git",
                     "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch" : "master",
-                    "commit" : "170ae9c5811607f03a45028b0a5e45a1ab18029f"
+                    "commit" : "ddda11f915e543bc3ccd48924a22afbdc1c99b4c"
                 }
             ]
         }
