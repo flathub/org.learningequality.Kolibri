@@ -60,7 +60,7 @@
                     "type" : "git",
                     "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch" : "master",
-                    "commit" : "ddda11f915e543bc3ccd48924a22afbdc1c99b4c"
+                    "commit" : "74e001bb4ccc40ea58c402d76df1567b6d66bfbd"
                 }
             ]
         }
