@@ -26,7 +26,7 @@
                     "type" : "git",
                     "url" : "https://github.com/kollivier/pyeverywhere.git",
                     "branch" : "dev",
-                    "commit" : "18b280ba756e3db9eb96891ea01eab00ef776311"
+                    "commit" : "5a2a7c87138ddb9e27c88b3e2bbfe4ff47b4407b"
                 }
             ]
         },
@@ -60,7 +60,7 @@
                     "type" : "git",
                     "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch" : "master",
-                    "commit" : "74e001bb4ccc40ea58c402d76df1567b6d66bfbd"
+                    "commit" : "b3d048cae778500abf3e6db260bd7f5a8221015a"
                 }
             ]
         }
