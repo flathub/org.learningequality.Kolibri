@@ -22,6 +22,7 @@
         }
     },
     "modules" : [
+        "python3-kolibri.json",
         "python3-requests.json",
         {
             "name" : "pyeverywhere",
@@ -39,28 +40,6 @@
             ]
         },
         {
-            "name" : "kolibri",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "pip3 install --prefix=/app ."
-            ],
-            "sources" : [
-                {
-                    "type" : "archive",
-                    "url" : "https://files.pythonhosted.org/packages/4d/37/4f043b3829a2ce0188956c5de45142405b041b7477b6b10f240d68406fce/kolibri-0.13.2rc1.tar.gz",
-                    "sha256" : "04aa7a7869a7febc3d0ce1824160d7b7ee3896f97940e11049e7601a117d09c9"
-                },
-                {
-                    "type" : "patch",
-                    "path" : "patches/kolibri_heartbeat.patch"
-                },
-                {
-                    "type" : "patch",
-                    "path" : "patches/kolibri_remove_sanity_check_for_port_availability.patch"
-                }
-            ]
-        },
-        {
             "name" : "kolibri-installer-gnome",
             "buildsystem" : "meson",
             "sources" : [
@@ -68,7 +47,7 @@
                     "type" : "git",
                     "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch" : "master",
-                    "commit" : "b3d048cae778500abf3e6db260bd7f5a8221015a"
+                    "commit" : "7a626e670a6378e54534f3fb06bca0e4fd1ebab1"
                 }
             ]
         }
