@@ -13,6 +13,14 @@
         "--socket=wayland",
         "--socket=x11"
     ],
+    "add-extensions": {
+        "org.learningequality.Kolibri.Content": {
+            "version": "1.0",
+            "directory": "share/kolibri-content",
+            "subdirectories": true,
+            "no-autodownload": true
+        }
+    },
     "modules" : [
         "python3-requests.json",
         {
