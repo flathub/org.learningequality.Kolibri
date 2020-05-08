@@ -50,6 +50,13 @@
                     "commit" : "7a626e670a6378e54534f3fb06bca0e4fd1ebab1"
                 }
             ]
+        },
+        {
+            "name" : "kolibri-content",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content"
+            ]
         }
     ]
 }
