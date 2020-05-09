@@ -6,6 +6,8 @@
     "command" : "kolibri-gnome",
     "finish-args" : [
         "--device=dri",
+        "--env=X_CONTENT_EXTENSIONS_DIR=/app/share/kolibri-content",
+        "--env=X_KOLIBRI=/app/libexec/kolibri",
         "--share=ipc",
         "--share=network",
         "--socket=fallback-x11",
@@ -55,7 +57,21 @@
             "name" : "kolibri-content",
             "buildsystem" : "simple",
             "build-commands" : [
-                "install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content"
+                "install -d -m 755 /app/share/kolibri-content"
+            ]
+        },
+        {
+            "name" : "kolibri-wrapper",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri",
+                "install -m 755 kolibri-flatpak-wrapper.py ${FLATPAK_DEST}/bin/kolibri"
+            ],
+            "sources" : [
+                {
+                    "type" : "file",
+                    "path" : "kolibri-flatpak-wrapper.py"
+                }
             ]
         }
     ]
