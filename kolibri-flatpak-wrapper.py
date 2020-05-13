@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Kolibri flatpak wrapper script.
-# Discovers content extension directories, sets KOLIBRI_CONTENT_PATH
+# Discovers content extension directories, sets CONTENT_FALLBACK_DIRS
 # accordingly, and runs scanforcontent when content extensions have changed.
 
 import logging
@@ -85,7 +85,7 @@ def main():
     content_path_list = [
         os.path.join(CONTENT_EXTENSIONS_DIR, name) for name in content_extensions.keys()
     ]
-    os.environ['KOLIBRI_CONTENT_PATH'] = ':'.join(content_path_list)
+    os.environ['CONTENT_FALLBACK_DIRS'] = ':'.join(content_path_list)
 
     update_content_extensions(content_extensions, env=kolibri_env)
 
