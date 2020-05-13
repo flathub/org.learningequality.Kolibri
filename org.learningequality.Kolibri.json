@@ -1,10 +1,10 @@
 {
-    "app-id" : "org.learningequality.Kolibri",
-    "runtime" : "org.gnome.Platform",
-    "runtime-version" : "3.36",
-    "sdk" : "org.gnome.Sdk",
-    "command" : "kolibri-gnome",
-    "finish-args" : [
+    "app-id": "org.learningequality.Kolibri",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.36",
+    "sdk": "org.gnome.Sdk",
+    "command": "kolibri-gnome",
+    "finish-args": [
         "--device=dri",
         "--env=X_CONTENT_EXTENSIONS_DIR=/app/share/kolibri-content",
         "--env=X_KOLIBRI=/app/libexec/kolibri",
@@ -23,54 +23,54 @@
             "no-autodownload": true
         }
     },
-    "modules" : [
+    "modules": [
         "python3-kolibri.json",
         "python3-requests.json",
         {
-            "name" : "pyeverywhere",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "pip3 install --prefix=/app ."
+            "name": "pyeverywhere",
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --prefix=${FLATPAK_DEST} ."
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://github.com/kollivier/pyeverywhere.git",
-                    "branch" : "dev",
-                    "commit" : "5a2a7c87138ddb9e27c88b3e2bbfe4ff47b4407b"
+                    "type": "git",
+                    "url": "https://github.com/kollivier/pyeverywhere.git",
+                    "branch": "dev",
+                    "commit": "cb27e40288cc3ccb8eb00da079137e2018f1dbb4"
                 }
             ]
         },
         {
-            "name" : "kolibri-installer-gnome",
-            "buildsystem" : "meson",
-            "sources" : [
+            "name": "kolibri-installer-gnome",
+            "buildsystem": "meson",
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://github.com/learningequality/kolibri-installer-gnome.git",
-                    "branch" : "master",
-                    "commit" : "7a626e670a6378e54534f3fb06bca0e4fd1ebab1"
+                    "type": "git",
+                    "url": "https://github.com/learningequality/kolibri-installer-gnome.git",
+                    "branch": "master",
+                    "commit": "ef5b12aa642130da4f908a6727ae4edd8fbb00ce"
                 }
             ]
         },
         {
-            "name" : "kolibri-content",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "install -d -m 755 /app/share/kolibri-content"
+            "name": "kolibri-content-dir",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content"
             ]
         },
         {
-            "name" : "kolibri-wrapper",
-            "buildsystem" : "simple",
-            "build-commands" : [
+            "name": "kolibri-wrapper",
+            "buildsystem": "simple",
+            "build-commands": [
                 "mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri",
                 "install -m 755 kolibri-flatpak-wrapper.py ${FLATPAK_DEST}/bin/kolibri"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "file",
-                    "path" : "kolibri-flatpak-wrapper.py"
+                    "type": "file",
+                    "path": "kolibri-flatpak-wrapper.py"
                 }
             ]
         }
