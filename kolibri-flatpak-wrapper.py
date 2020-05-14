@@ -18,21 +18,34 @@ import sys
 from collections import namedtuple
 from configparser import ConfigParser
 
-from kolibri_gnome.globals import init_logging, XDG_DATA_HOME
+from kolibri_gnome.globals import init_logging, KOLIBRI_HOME
 
 KOLIBRI = os.environ.get('X_KOLIBRI', 'kolibri')
 
 
-class ContentExtension(namedtuple('ContentExtension', ['ref', 'name', 'commit'])):
+class ContentExtension(object):
+    """
+    Represents a content extension, with details about the flatpak ref and
+    support for an index of content which may be either cached or located in the
+    content extension itself. We assume any ContentExtension instances with
+    matching ref and commit must be the same.
+    """
+
     CONTENT_EXTENSIONS_DIR = os.environ.get('X_CONTENT_EXTENSIONS_DIR', '')
     CONTENT_EXTENSION_RE = r'^org.learningequality.Kolibri.Content.(?P<name>\w+)$'
 
+    def __init__(self, ref, name, commit, content=None):
+        self.__ref = ref
+        self.__name = name
+        self.__commit = commit
+        self.__content = content
+
     @classmethod
-    def from_ref(cls, ref, *args, **kwargs):
+    def from_ref(cls, ref, commit):
         match = re.match(cls.CONTENT_EXTENSION_RE, ref)
         if match:
             name = match.group('name')
-            return cls(ref, name, *args, **kwargs)
+            return cls(ref, name, commit, content=None)
         else:
             return None
 
@@ -41,31 +54,70 @@ class ContentExtension(namedtuple('ContentExtension', ['ref', 'name', 'commit'])
         return cls(
             json.get('ref'),
             json.get('name'),
-            json.get('commit')
+            json.get('commit'),
+            content=json.get('content')
         )
 
     def to_json(self):
-        return self._asdict()
+        return {
+            'ref': self.ref,
+            'name': self.name,
+            'commit': self.commit,
+            'content': self.content
+        }
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __hash__(self):
+        return hash(self.__ref, self.__name, self.__commit)
+
+    @property
+    def ref(self):
+        return self.__ref
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def commit(self):
+        return self.__commit
+
+    @property
+    def content(self):
+        if self.__content is not None:
+            return self.__content
+
+        try:
+            with open(self.__content_path, 'r') as file:
+                self.__content = json.load(file)
+        except (OSError, json.JSONDecodeError):
+            self.__content == {}
+
+        return self.__content
+
+    @property
+    def channels(self):
+        return self.content.get('channels', [])
 
     @property
     def path(self):
         return os.path.join(self.CONTENT_EXTENSIONS_DIR, self.name)
 
-    def get_content(self):
-        # TODO: Store this in the cache (ContentExtensionsList), not here.
-        content_path = os.path.join(self.path, 'content.json')
-        try:
-            with open(content_path, 'r') as file:
-                return json.load(file)
-        except (OSError, json.JSONDecodeError):
-            return {}
-
-    def get_channels(self):
-        return self.get_content().get('channels', [])
+    @property
+    def __content_path(self):
+        return os.path.join(self.path, 'content.json')
 
 
 class ContentExtensionsList(object):
-    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(XDG_DATA_HOME, 'kolibri-content-extensions.json')
+    """
+    Keeps track of a list of content extensions, either cached from a file in
+    $KOLIBIR_HOME, or generated from /.flatpak-info. Multiple lists can be
+    compared to detect changes in the environment.
+    """
+
+    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(KOLIBRI_HOME, 'content-extensions.json')
 
     def __init__(self, extensions=set()):
         self.__extensions = set(extensions)
@@ -121,18 +173,11 @@ class ContentExtensionsList(object):
         return new.__filter_extensions(added_refs)
 
     @staticmethod
-    def changed(old, new):
+    def updated(old, new):
         common_refs = old.__refs.intersection(new.__refs)
         old_extensions = old.__filter_extensions(common_refs)
         new_extensions = new.__filter_extensions(common_refs)
         return new_extensions.difference(old_extensions)
-
-    @staticmethod
-    def unchanged(old, new):
-        common_refs = old.__refs.intersection(new.__refs)
-        old_extensions = old.__filter_extensions(common_refs)
-        new_extensions = new.__filter_extensions(common_refs)
-        return new_extensions.intersection(old_extensions)
 
     @property
     def __extensions_dict(self):
@@ -180,23 +225,20 @@ def main():
     for extension in ContentExtensionsList.removed(cached_extensions, active_extensions):
         logging.info("Removed extension: %s", extension.ref)
         changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.get_channels())
+            map(operator.itemgetter('channel_id'), extension.channels)
         )
 
     for extension in ContentExtensionsList.added(cached_extensions, active_extensions):
         logging.info("Added extension: %s", extension.ref)
         changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.get_channels())
+            map(operator.itemgetter('channel_id'), extension.channels)
         )
 
-    for extension in ContentExtensionsList.changed(cached_extensions, active_extensions):
-        logging.info("Changed extension: %s", extension.ref)
+    for extension in ContentExtensionsList.updated(cached_extensions, active_extensions):
+        logging.info("Updated extension: %s", extension.ref)
         changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.get_channels())
+            map(operator.itemgetter('channel_id'), extension.channels)
         )
-
-    for extension in ContentExtensionsList.unchanged(cached_extensions, active_extensions):
-        logging.debug("Unchanged extension: %s", extension.ref)
 
     if len(changed_channels) > 0:
         scan_success = run_kolibri_scan_content(changed_channels, env=kolibri_env)
