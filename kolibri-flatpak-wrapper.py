@@ -70,7 +70,7 @@ class ContentExtension(object):
         return hash(self) == hash(other)
 
     def __hash__(self):
-        return hash(self.__ref, self.__name, self.__commit)
+        return hash((self.__ref, self.__name, self.__commit))
 
     @property
     def ref(self):
@@ -194,58 +194,82 @@ class ContentExtensionsList(object):
         return set(map(self.__get_extension, refs))
 
 
-def run_kolibri(args=None, env=None):
-    if args is None:
-        args = sys.argv[1:]
-    return subprocess.run([KOLIBRI, *args], env=env).returncode
+class Application(object):
+    def __init__(self):
+        self.__cached_extensions = ContentExtensionsList.from_cache()
+        self.__active_extensions = ContentExtensionsList.from_flatpak_info()
 
+    def run(self):
+        process_success = all([
+            self.__process_removed_extensions(),
+            self.__process_added_extensions(),
+            self.__process_updated_extensions()
+        ])
 
-def run_kolibri_scan_content(channel_ids, env=None):
-    logger.info("scanforcontent starting: %s %s", datetime.datetime.today(), channel_ids)
-    scan_result = run_kolibri(['manage', 'scanforcontent', '--channels', ','.join(channel_ids)], env=env)
-    if scan_result == 0:
-        logger.info("scanforcontent completed: %s", datetime.datetime.today())
-        return True
-    else:
-        logger.warning("scanforcontent failed: %d", scan_result)
-        return False
+        if process_success:
+            self.__active_extensions.write_to_cache()
+
+        return self.__run_kolibri()
+
+    def __process_removed_extensions(self):
+        channel_ids = set()
+        for extension in ContentExtensionsList.removed(self.__cached_extensions, self.__active_extensions):
+            logging.info("Removed extension: %s", extension.ref)
+            channel_ids.update(
+                map(operator.itemgetter('channel_id'), extension.channels)
+            )
+        return self.__kolibri_scan_content(channel_ids, ['--channel-import-mode=none'])
+
+    def __process_added_extensions(self):
+        channel_ids = set()
+        for extension in ContentExtensionsList.added(self.__cached_extensions, self.__active_extensions):
+            logging.info("Added extension: %s", extension.ref)
+            channel_ids.update(
+                map(operator.itemgetter('channel_id'), extension.channels)
+            )
+        return self.__kolibri_scan_content(channel_ids)
+
+    def __process_updated_extensions(self):
+        channel_ids = set()
+        for extension in ContentExtensionsList.updated(self.__cached_extensions, self.__active_extensions):
+            logging.info("Updated extension: %s", extension.ref)
+            channel_ids.update(
+                map(operator.itemgetter('channel_id'), extension.channels)
+            )
+        return self.__kolibri_scan_content(channel_ids)
+
+    def __kolibri_scan_content(self, channel_ids, args=[]):
+        if len(channel_ids) == 0:
+            return True
+
+        logger.info("scanforcontent starting for channels %s: %s", channel_ids, datetime.datetime.today())
+
+        try:
+            self.__run_kolibri(['manage', 'scanforcontent', '--channels={}'.format(','.join(channel_ids)), *args])
+        except CalledProcessException as error:
+            logger.warning("scanforcontent failed: %s", datetime.datetime.today())
+            return False
+        else:
+            logger.info("scanforcontent completed: %s", datetime.datetime.today())
+            return True
+
+    def __run_kolibri(self, args=None):
+        if args is None:
+            args = sys.argv[1:]
+        result = subprocess.run([KOLIBRI, *args], env=self.__kolibri_env, check=True)
+        return result.returncode
+
+    @property
+    def __kolibri_env(self):
+        kolibri_env = os.environ.copy()
+        kolibri_env['KOLIBRI_CONTENT_FALLBACK_DIRS'] = self.__active_extensions.content_fallback_dirs
+        return kolibri_env
 
 
 def main():
     init_logging('kolibri-flatpak-wrapper.txt')
-
-    cached_extensions = ContentExtensionsList.from_cache()
-    active_extensions = ContentExtensionsList.from_flatpak_info()
-
-    kolibri_env = os.environ.copy()
-    kolibri_env['KOLIBRI_CONTENT_FALLBACK_DIRS'] = active_extensions.content_fallback_dirs
-
-    changed_channels = set()
-
-    for extension in ContentExtensionsList.removed(cached_extensions, active_extensions):
-        logging.info("Removed extension: %s", extension.ref)
-        changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.channels)
-        )
-
-    for extension in ContentExtensionsList.added(cached_extensions, active_extensions):
-        logging.info("Added extension: %s", extension.ref)
-        changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.channels)
-        )
-
-    for extension in ContentExtensionsList.updated(cached_extensions, active_extensions):
-        logging.info("Updated extension: %s", extension.ref)
-        changed_channels.update(
-            map(operator.itemgetter('channel_id'), extension.channels)
-        )
-
-    if len(changed_channels) > 0:
-        scan_success = run_kolibri_scan_content(changed_channels, env=kolibri_env)
-        if scan_success:
-            active_extensions.write_to_cache()
-
-    return run_kolibri(env=kolibri_env)
+    application = Application()
+    return application.run()
 
 
 if __name__ == "__main__":
