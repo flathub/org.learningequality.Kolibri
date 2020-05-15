@@ -160,9 +160,7 @@ class ContentExtensionsList(object):
 
     @property
     def content_fallback_dirs(self):
-        return ':'.join(
-            map(operator.attrgetter('content_dir'), self.__extensions)
-        )
+        return list(map(operator.attrgetter('content_dir'), self.__extensions))
 
     @staticmethod
     def removed(old, new):
@@ -270,7 +268,7 @@ class Application(object):
     @property
     def __kolibri_env(self):
         kolibri_env = os.environ.copy()
-        kolibri_env['KOLIBRI_CONTENT_FALLBACK_DIRS'] = self.__active_extensions.content_fallback_dirs
+        kolibri_env['KOLIBRI_CONTENT_FALLBACK_DIRS'] = ';'.join(self.__active_extensions.content_fallback_dirs)
         return kolibri_env
 
 
