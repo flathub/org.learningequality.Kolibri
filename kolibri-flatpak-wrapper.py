@@ -89,8 +89,10 @@ class ContentExtension(object):
         if self.__content is not None:
             return self.__content
 
+        content_json_path = os.path.join(self.content_dir, 'content.json')
+
         try:
-            with open(self.__content_path, 'r') as file:
+            with open(content_json_path, 'r') as file:
                 self.__content = json.load(file)
         except (OSError, json.JSONDecodeError):
             self.__content == {}
@@ -102,12 +104,12 @@ class ContentExtension(object):
         return self.content.get('channels', [])
 
     @property
-    def path(self):
+    def base_dir(self):
         return os.path.join(self.CONTENT_EXTENSIONS_DIR, self.name)
 
     @property
-    def __content_path(self):
-        return os.path.join(self.path, 'content.json')
+    def content_dir(self):
+        return os.path.join(self.base_dir, 'content')
 
 
 class ContentExtensionsList(object):
@@ -159,7 +161,7 @@ class ContentExtensionsList(object):
     @property
     def content_fallback_dirs(self):
         return ':'.join(
-            map(operator.attrgetter('path'), self.__extensions)
+            map(operator.attrgetter('content_dir'), self.__extensions)
         )
 
     @staticmethod
@@ -212,6 +214,8 @@ class Application(object):
         return self.__run_kolibri()
 
     def __process_removed_extensions(self):
+        # For each removed channel, run scanforcontent
+        # TODO: Is there a less expensive way of doing this than scanforcontent?
         channel_ids = set()
         for extension in ContentExtensionsList.removed(self.__cached_extensions, self.__active_extensions):
             logging.info("Removed extension: %s", extension.ref)
@@ -221,6 +225,8 @@ class Application(object):
         return self.__kolibri_scan_content(channel_ids, ['--channel-import-mode=none'])
 
     def __process_added_extensions(self):
+        # For each added channel, run scanforcontent
+        # TODO: Instead of scanforcontent, use importcontent with --node_ids and --exclude_node_ids
         channel_ids = set()
         for extension in ContentExtensionsList.added(self.__cached_extensions, self.__active_extensions):
             logging.info("Added extension: %s", extension.ref)
@@ -230,6 +236,8 @@ class Application(object):
         return self.__kolibri_scan_content(channel_ids)
 
     def __process_updated_extensions(self):
+        # For each updated channel, run scanforcontent
+        # TODO: Instead of scanforcontent, use importcontent with --node_ids and --exclude_node_ids
         channel_ids = set()
         for extension in ContentExtensionsList.updated(self.__cached_extensions, self.__active_extensions):
             logging.info("Updated extension: %s", extension.ref)
