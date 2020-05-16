@@ -20,7 +20,35 @@ from configparser import ConfigParser
 
 from kolibri_gnome.globals import init_logging, KOLIBRI_HOME
 
+
 KOLIBRI = os.environ.get('X_KOLIBRI', 'kolibri')
+
+
+class KolibriContentChannel(object):
+    def __init__(self, channel_id, node_ids, exclude_node_ids):
+        self.__channel_id = channel_id
+        self.__node_ids = node_ids
+        self.__exclude_node_ids = exclude_node_ids
+
+    @classmethod
+    def from_json(cls, json):
+        return cls(
+            json.get('channel_id'),
+            json.get('node_ids'),
+            json.get('exclude_node_ids')
+        )
+
+    @property
+    def channel_id(self):
+        return self.__channel_id
+
+    @property
+    def node_ids(self):
+        return self.__node_ids
+
+    @property
+    def exclude_node_ids(self):
+        return self.__exclude_node_ids
 
 
 class ContentExtension(object):
@@ -34,18 +62,18 @@ class ContentExtension(object):
     CONTENT_EXTENSIONS_DIR = os.environ.get('X_CONTENT_EXTENSIONS_DIR', '')
     CONTENT_EXTENSION_RE = r'^org.learningequality.Kolibri.Content.(?P<name>\w+)$'
 
-    def __init__(self, ref, name, commit, content=None):
+    def __init__(self, ref, name, commit, content_json=None):
         self.__ref = ref
         self.__name = name
         self.__commit = commit
-        self.__content = content
+        self.__content_json = content_json
 
     @classmethod
     def from_ref(cls, ref, commit):
         match = re.match(cls.CONTENT_EXTENSION_RE, ref)
         if match:
             name = match.group('name')
-            return cls(ref, name, commit, content=None)
+            return cls(ref, name, commit, content_json=None)
         else:
             return None
 
@@ -55,7 +83,7 @@ class ContentExtension(object):
             json.get('ref'),
             json.get('name'),
             json.get('commit'),
-            content=json.get('content')
+            content_json=json.get('content')
         )
 
     def to_json(self):
@@ -63,7 +91,7 @@ class ContentExtension(object):
             'ref': self.ref,
             'name': self.name,
             'commit': self.commit,
-            'content': self.content
+            'content': self.content_json
         }
 
     def __eq__(self, other):
@@ -85,23 +113,24 @@ class ContentExtension(object):
         return self.__commit
 
     @property
-    def content(self):
-        if self.__content is not None:
-            return self.__content
+    def content_json(self):
+        if self.__content_json is not None:
+            return self.__content_json
 
         content_json_path = os.path.join(self.content_dir, 'content.json')
 
         try:
             with open(content_json_path, 'r') as file:
-                self.__content = json.load(file)
+                self.__content_json = json.load(file)
         except (OSError, json.JSONDecodeError):
-            self.__content == {}
+            self.__content_json = {}
 
-        return self.__content
+        return self.__content_json
 
     @property
     def channels(self):
-        return self.content.get('channels', [])
+        channels_json = self.content_json.get('channels', [])
+        return set(map(KolibriContentChannel.from_json, channels_json))
 
     @property
     def base_dir(self):
@@ -218,7 +247,7 @@ class Application(object):
         for extension in ContentExtensionsList.removed(self.__cached_extensions, self.__active_extensions):
             logging.info("Removed extension: %s", extension.ref)
             channel_ids.update(
-                map(operator.itemgetter('channel_id'), extension.channels)
+                map(operator.attrgetter('channel_id'), extension.channels)
             )
         return self.__kolibri_scan_content(channel_ids, ['--channel-import-mode=none'])
 
@@ -229,7 +258,7 @@ class Application(object):
         for extension in ContentExtensionsList.added(self.__cached_extensions, self.__active_extensions):
             logging.info("Added extension: %s", extension.ref)
             channel_ids.update(
-                map(operator.itemgetter('channel_id'), extension.channels)
+                map(operator.attrgetter('channel_id'), extension.channels)
             )
         return self.__kolibri_scan_content(channel_ids)
 
@@ -240,7 +269,7 @@ class Application(object):
         for extension in ContentExtensionsList.updated(self.__cached_extensions, self.__active_extensions):
             logging.info("Updated extension: %s", extension.ref)
             channel_ids.update(
-                map(operator.itemgetter('channel_id'), extension.channels)
+                map(operator.attrgetter('channel_id'), extension.channels)
             )
         return self.__kolibri_scan_content(channel_ids)
 
