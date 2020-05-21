@@ -1,0 +1,20 @@
+{
+    "name": "python3-virtualenv-api",
+    "buildsystem": "simple",
+    "build-commands": [
+        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} virtualenv-api"
+    ],
+    "sources": [
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/65/eb/1f97cb97bfc2390a276969c6fae16075da282f5058082d4cb10c6c5c1dba/six-1.14.0-py2.py3-none-any.whl",
+            "sha256": "8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"
+        },
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/ee/cb/197bc3ba2a5f1d3af520f1acfb124dd696a63561c360abadd86619f54fad/virtualenv_api-2.1.18-py2.py3-none-any.whl",
+            "sha256": "7b9227a32b97dfddfc1f362cbd78ab768226be663c2ae20c7182e6d428268c28"
+        }
+    ]
+}
+
