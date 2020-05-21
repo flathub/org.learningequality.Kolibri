@@ -6,7 +6,7 @@
     "command": "kolibri-gnome",
     "finish-args": [
         "--device=dri",
-        "--env=KOLIBRI_HOME_TEMPLATE=/app/share/kolibri-default-home",
+        "--env=X_KOLIBRI_HOME_TEMPLATE=/app/share/kolibri-default-home",
         "--share=ipc",
         "--share=network",
         "--socket=fallback-x11",
@@ -54,11 +54,11 @@
             ]
         },
         {
-            "name": "kolibri-preseed-home",
+            "name": "kolibri-home-template",
             "buildsystem": "simple",
             "build-options": {
                 "env": {
-                    "KOLIBRI_HOME": "/app/share/kolibri-default-home"
+                    "KOLIBRI_HOME": "/app/share/kolibri-home-template"
                 }
             },
             "build-commands": [
@@ -80,20 +80,15 @@
             ]
         },
         {
-            "name": "kolibri-wrapper",
+            "name": "kolibri-flatpak-utils",
             "buildsystem": "simple",
             "build-commands": [
-                "install -m 755 kolibri.sh ${FLATPAK_DEST}/bin/kolibri",
-                "install -m 755 kolibri-flatpak-scan-extensions.py ${FLATPAK_DEST}/libexec/kolibri-flatpak-scan-extensions.py"
+                "pip3 install --prefix=${FLATPAK_DEST} ."
             ],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "kolibri.sh"
-                },
-                {
-                    "type": "file",
-                    "path": "kolibri-flatpak-scan-extensions.py"
+                    "type": "dir",
+                    "path": "kolibri-flatpak-utils"
                 }
             ]
         }
