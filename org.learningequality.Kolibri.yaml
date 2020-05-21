@@ -1,0 +1,97 @@
+---
+app-id: org.learningequality.Kolibri
+runtime: org.gnome.Platform
+runtime-version: '3.36'
+sdk: org.gnome.Sdk
+command: kolibri-gnome
+
+finish-args:
+  - --device=dri
+  - --env=X_KOLIBRI_HOME_TEMPLATE=/app/share/kolibri-default-home
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --socket=x11
+
+add-extensions:
+  org.learningequality.Kolibri.Content:
+    version: '1.0'
+    directory: share/kolibri-content
+    subdirectories: true
+    no-autodownload: true
+
+modules:
+  - name: python3-kolibri
+    buildsystem: simple
+    build-commands:
+      - pip3 install --exists-action=i --no-index --find-links="file://${PWD}/wheel" --prefix=${FLATPAK_DEST}
+        kolibri
+      - cp -R git/kolibri/core ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - cp -R git/kolibri/deployment ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - cp -R git/kolibri/locale ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - cp -R git/kolibri/plugins ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - cp -R git/kolibri/utils ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - mkdir -p ${FLATPAK_DEST}/libexec
+      - mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/b5/9e/64404d04d54b5d15da61adace90d72b99736526ce0e66c1f487f9c0c14a4/kolibri-0.13.2-py2.py3-none-any.whl
+        sha256: bfacca80f6ade8e605c370cde1924dd2f0262d8eece94e4f5628cbe2177465af
+        dest: wheel
+      - type: git
+        url: https://github.com/jamalex/kolibri.git
+        # branch: content_fallback_paths
+        commit: 642276165d12350672af0ffa7f89324155599f4d
+        dest: git
+
+  - python3-requests.json
+
+  - python3-virtualenv-api.json
+
+  - name: pyeverywhere
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=${FLATPAK_DEST} .
+    sources:
+      - type: git
+        url: https://github.com/kollivier/pyeverywhere.git
+        # branch: dev
+        commit: 63cdb6dd642ebce4af6a5134dbabcd4bd4f2a96d
+
+  - name: kolibri-installer-gnome
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://github.com/learningequality/kolibri-installer-gnome.git
+        # branch: master
+        commit: e6389043556dae4746a612363831a87b44b6a656
+
+  - name: kolibri-home-template
+    buildsystem: simple
+    build-options:
+      env:
+        KOLIBRI_HOME: /app/share/kolibri-home-template
+    build-commands:
+      - install -d ${KOLIBRI_HOME}
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage migrate
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage collectstatic
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage deprovision
+      - rm -r ${KOLIBRI_HOME}/logs
+      - rm -r ${KOLIBRI_HOME}/sessions
+      - rm -r ${KOLIBRI_HOME}/process_cache
+      - touch ${KOLIBRI_HOME}/was_preseeded
+
+  - name: kolibri-content-dir
+    buildsystem: simple
+    build-commands:
+      - install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content
+
+  - name: kolibri-flatpak-utils
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=${FLATPAK_DEST} .
+    sources:
+      - type: dir
+        path: kolibri-flatpak-utils

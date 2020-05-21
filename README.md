@@ -4,7 +4,7 @@ This package contains [Kolibri](https://learningequality.org/kolibri/) as well
 as a GNOME front-end. To build and install this package on your system, use
 flatpak-builder…
 
-    flatpak-builder build-dir org.learningequality.Kolibri.json --install --user
+    flatpak-builder build-dir org.learningequality.Kolibri.yaml --install --user
 
 Once it is installed, you can run Kolibri:
 
