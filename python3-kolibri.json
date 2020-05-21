@@ -7,7 +7,9 @@
         "cp -R git/kolibri/deployment ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/",
         "cp -R git/kolibri/locale ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/",
         "cp -R git/kolibri/plugins ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/",
-        "cp -R git/kolibri/utils ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/"
+        "cp -R git/kolibri/utils ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/",
+        "mkdir -p ${FLATPAK_DEST}/libexec",
+        "mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri"
     ],
     "sources": [
         {

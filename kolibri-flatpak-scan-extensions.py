@@ -22,6 +22,9 @@ from kolibri_gnome.globals import init_logging, KOLIBRI_HOME
 
 
 KOLIBRI = os.environ.get('X_KOLIBRI', 'kolibri')
+CONTENT_EXTENSIONS_DIR = os.environ.get('X_KOLIBRI_CONTENT_EXTENSIONS_DIR', '')
+
+CONTENT_EXTENSION_RE = r'^org.learningequality.Kolibri.Content.(?P<name>\w+)$'
 
 
 class KolibriContentChannel(object):
@@ -59,9 +62,6 @@ class ContentExtension(object):
     matching ref and commit must be the same.
     """
 
-    CONTENT_EXTENSIONS_DIR = os.environ.get('X_CONTENT_EXTENSIONS_DIR', '')
-    CONTENT_EXTENSION_RE = r'^org.learningequality.Kolibri.Content.(?P<name>\w+)$'
-
     def __init__(self, ref, name, commit, content_json=None):
         self.__ref = ref
         self.__name = name
@@ -70,7 +70,7 @@ class ContentExtension(object):
 
     @classmethod
     def from_ref(cls, ref, commit):
-        match = re.match(cls.CONTENT_EXTENSION_RE, ref)
+        match = re.match(CONTENT_EXTENSION_RE, ref)
         if match:
             name = match.group('name')
             return cls(ref, name, commit, content_json=None)
@@ -134,7 +134,7 @@ class ContentExtension(object):
 
     @property
     def base_dir(self):
-        return os.path.join(self.CONTENT_EXTENSIONS_DIR, self.name)
+        return os.path.join(CONTENT_EXTENSIONS_DIR, self.name)
 
     @property
     def content_dir(self):
@@ -237,8 +237,6 @@ class Application(object):
 
         if process_success:
             self.__active_extensions.write_to_cache()
-
-        return self.__run_kolibri()
 
     def __process_removed_extensions(self):
         # For each removed channel, run scanforcontent

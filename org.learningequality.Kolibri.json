@@ -6,8 +6,7 @@
     "command": "kolibri-gnome",
     "finish-args": [
         "--device=dri",
-        "--env=X_CONTENT_EXTENSIONS_DIR=/app/share/kolibri-content",
-        "--env=X_KOLIBRI=/app/libexec/kolibri",
+        "--env=KOLIBRI_HOME_TEMPLATE=/app/share/kolibri-default-home",
         "--share=ipc",
         "--share=network",
         "--socket=fallback-x11",
@@ -50,8 +49,27 @@
                     "type": "git",
                     "url": "https://github.com/learningequality/kolibri-installer-gnome.git",
                     "branch": "master",
-                    "commit": "b9e2df1d9ce4f3bc01431de6a9797c74a1aac791"
+                    "commit": "c90499e6a64737acdb7f62eb9468ea2ec81009ad"
                 }
+            ]
+        },
+        {
+            "name": "kolibri-preseed-home",
+            "buildsystem": "simple",
+            "build-options": {
+                "env": {
+                    "KOLIBRI_HOME": "/app/share/kolibri-default-home"
+                }
+            },
+            "build-commands": [
+                "install -d ${KOLIBRI_HOME}",
+                "yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage migrate",
+                "yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage collectstatic",
+                "yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage deprovision",
+                "rm -r ${KOLIBRI_HOME}/logs",
+                "rm -r ${KOLIBRI_HOME}/sessions",
+                "rm -r ${KOLIBRI_HOME}/process_cache",
+                "touch ${KOLIBRI_HOME}/was_preseeded"
             ]
         },
         {
@@ -65,13 +83,17 @@
             "name": "kolibri-wrapper",
             "buildsystem": "simple",
             "build-commands": [
-                "mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri",
-                "install -m 755 kolibri-flatpak-wrapper.py ${FLATPAK_DEST}/bin/kolibri"
+                "install -m 755 kolibri.sh ${FLATPAK_DEST}/bin/kolibri",
+                "install -m 755 kolibri-flatpak-scan-extensions.py ${FLATPAK_DEST}/libexec/kolibri-flatpak-scan-extensions.py"
             ],
             "sources": [
                 {
                     "type": "file",
-                    "path": "kolibri-flatpak-wrapper.py"
+                    "path": "kolibri.sh"
+                },
+                {
+                    "type": "file",
+                    "path": "kolibri-flatpak-scan-extensions.py"
                 }
             ]
         }
