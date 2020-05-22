@@ -7,7 +7,6 @@ from configparser import ConfigParser
 
 from kolibri_gnome.globals import KOLIBRI_HOME
 
-
 CONTENT_EXTENSIONS_DIR = "/app/share/kolibri-content"
 
 CONTENT_EXTENSION_RE = r"^org.learningequality.Kolibri.Content.(?P<name>\w+)$"
@@ -96,15 +95,18 @@ class ContentExtension(object):
     def commit(self):
         return self.__commit
 
+    def is_valid(self):
+        return all(
+            [os.path.isdir(self.content_dir), os.path.isfile(self.__content_json_path)]
+        )
+
     @property
     def content_json(self):
         if self.__content_json is not None:
             return self.__content_json
 
-        content_json_path = os.path.join(self.content_dir, "content.json")
-
         try:
-            with open(content_json_path, "r") as file:
+            with open(self.__content_json_path, "r") as file:
                 self.__content_json = json.load(file)
         except (OSError, json.JSONDecodeError):
             self.__content_json = {}
@@ -123,6 +125,10 @@ class ContentExtension(object):
     @property
     def content_dir(self):
         return os.path.join(self.base_dir, "content")
+
+    @property
+    def __content_json_path(self):
+        return os.path.join(self.content_dir, "content.json")
 
 
 class ContentExtensionsList(object):
@@ -151,7 +157,7 @@ class ContentExtensionsList(object):
             content_extension = ContentExtension.from_ref(
                 extension_ref, commit=extension_commit
             )
-            if content_extension:
+            if content_extension and content_extension.is_valid():
                 extensions.add(content_extension)
 
         return cls(extensions)
@@ -180,7 +186,7 @@ class ContentExtensionsList(object):
         return list(map(operator.attrgetter("content_dir"), self.__extensions))
 
     def diff(self, other):
-        return ContextExtensionsDiff(self, other)
+        return ContentExtensionsDiff(self, other)
 
     @staticmethod
     def removed(old, new):
@@ -219,19 +225,16 @@ class ContentExtensionsDiff(object):
         self.__old_extensions_list = old_extensions_list
         self.__new_extensions_list = new_extensions_list
 
-    @property
     def removed(self):
         return ContentExtensionsList.removed(
             self.__old_extensions_list, self.__new_extensions_list
         )
 
-    @property
     def added(self):
         return ContentExtensionsList.added(
             self.__old_extensions_list, self.__new_extensions_list
         )
 
-    @property
     def updated(self):
         return ContentExtensionsList.updated(
             self.__old_extensions_list, self.__new_extensions_list
