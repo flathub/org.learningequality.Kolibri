@@ -8,9 +8,9 @@ from configparser import ConfigParser
 from kolibri_gnome.globals import KOLIBRI_HOME
 
 
-CONTENT_EXTENSIONS_DIR = '/app/share/kolibri-content'
+CONTENT_EXTENSIONS_DIR = "/app/share/kolibri-content"
 
-CONTENT_EXTENSION_RE = r'^org.learningequality.Kolibri.Content.(?P<name>\w+)$'
+CONTENT_EXTENSION_RE = r"^org.learningequality.Kolibri.Content.(?P<name>\w+)$"
 
 
 class KolibriContentChannel(object):
@@ -22,9 +22,7 @@ class KolibriContentChannel(object):
     @classmethod
     def from_json(cls, json):
         return cls(
-            json.get('channel_id'),
-            json.get('node_ids'),
-            json.get('exclude_node_ids')
+            json.get("channel_id"), json.get("node_ids"), json.get("exclude_node_ids")
         )
 
     @property
@@ -58,7 +56,7 @@ class ContentExtension(object):
     def from_ref(cls, ref, commit):
         match = re.match(CONTENT_EXTENSION_RE, ref)
         if match:
-            name = match.group('name')
+            name = match.group("name")
             return cls(ref, name, commit, content_json=None)
         else:
             return None
@@ -66,18 +64,18 @@ class ContentExtension(object):
     @classmethod
     def from_json(cls, json):
         return cls(
-            json.get('ref'),
-            json.get('name'),
-            json.get('commit'),
-            content_json=json.get('content')
+            json.get("ref"),
+            json.get("name"),
+            json.get("commit"),
+            content_json=json.get("content"),
         )
 
     def to_json(self):
         return {
-            'ref': self.ref,
-            'name': self.name,
-            'commit': self.commit,
-            'content': self.content_json
+            "ref": self.ref,
+            "name": self.name,
+            "commit": self.commit,
+            "content": self.content_json,
         }
 
     def __eq__(self, other):
@@ -103,10 +101,10 @@ class ContentExtension(object):
         if self.__content_json is not None:
             return self.__content_json
 
-        content_json_path = os.path.join(self.content_dir, 'content.json')
+        content_json_path = os.path.join(self.content_dir, "content.json")
 
         try:
-            with open(content_json_path, 'r') as file:
+            with open(content_json_path, "r") as file:
                 self.__content_json = json.load(file)
         except (OSError, json.JSONDecodeError):
             self.__content_json = {}
@@ -115,7 +113,7 @@ class ContentExtension(object):
 
     @property
     def channels(self):
-        channels_json = self.content_json.get('channels', [])
+        channels_json = self.content_json.get("channels", [])
         return set(map(KolibriContentChannel.from_json, channels_json))
 
     @property
@@ -124,7 +122,7 @@ class ContentExtension(object):
 
     @property
     def content_dir(self):
-        return os.path.join(self.base_dir, 'content')
+        return os.path.join(self.base_dir, "content")
 
 
 class ContentExtensionsList(object):
@@ -134,7 +132,9 @@ class ContentExtensionsList(object):
     compared to detect changes in the environment.
     """
 
-    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(KOLIBRI_HOME, 'content-extensions.json')
+    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(
+        KOLIBRI_HOME, "content-extensions.json"
+    )
 
     def __init__(self, extensions=set()):
         self.__extensions = set(extensions)
@@ -144,11 +144,13 @@ class ContentExtensionsList(object):
         extensions = set()
 
         flatpak_info = ConfigParser()
-        flatpak_info.read('/.flatpak-info')
-        app_extensions = flatpak_info.get('Instance', 'app-extensions', fallback='')
-        for extension_str in app_extensions.split(';'):
-            extension_ref, extension_commit = extension_str.split('=')
-            content_extension = ContentExtension.from_ref(extension_ref, commit=extension_commit)
+        flatpak_info.read("/.flatpak-info")
+        app_extensions = flatpak_info.get("Instance", "app-extensions", fallback="")
+        for extension_str in app_extensions.split(";"):
+            extension_ref, extension_commit = extension_str.split("=")
+            content_extension = ContentExtension.from_ref(
+                extension_ref, commit=extension_commit
+            )
             if content_extension:
                 extensions.add(content_extension)
 
@@ -159,7 +161,7 @@ class ContentExtensionsList(object):
         extensions = set()
 
         try:
-            with open(cls.CONTENT_EXTENSIONS_STATE_PATH, 'r') as file:
+            with open(cls.CONTENT_EXTENSIONS_STATE_PATH, "r") as file:
                 extensions_json = json.load(file)
         except (OSError, json.JSONDecodeError):
             pass
@@ -169,13 +171,16 @@ class ContentExtensionsList(object):
         return cls(extensions)
 
     def write_to_cache(self):
-        with open(self.CONTENT_EXTENSIONS_STATE_PATH, 'w') as file:
+        with open(self.CONTENT_EXTENSIONS_STATE_PATH, "w") as file:
             extensions_json = list(map(ContentExtension.to_json, self.__extensions))
             json.dump(extensions_json, file)
 
     @property
     def content_fallback_dirs(self):
-        return list(map(operator.attrgetter('content_dir'), self.__extensions))
+        return list(map(operator.attrgetter("content_dir"), self.__extensions))
+
+    def diff(self, other):
+        return ContextExtensionsDiff(self, other)
 
     @staticmethod
     def removed(old, new):
@@ -200,7 +205,7 @@ class ContentExtensionsList(object):
 
     @property
     def __refs(self):
-        return set(map(operator.attrgetter('ref'), self.__extensions))
+        return set(map(operator.attrgetter("ref"), self.__extensions))
 
     def __get_extension(self, ref):
         return self.__extensions_dict.get(ref)
@@ -208,3 +213,26 @@ class ContentExtensionsList(object):
     def __filter_extensions(self, refs):
         return set(map(self.__get_extension, refs))
 
+
+class ContentExtensionsDiff(object):
+    def __init__(self, old_extensions_list, new_extensions_list):
+        self.__old_extensions_list = old_extensions_list
+        self.__new_extensions_list = new_extensions_list
+
+    @property
+    def removed(self):
+        return ContentExtensionsList.removed(
+            self.__old_extensions_list, self.__new_extensions_list
+        )
+
+    @property
+    def added(self):
+        return ContentExtensionsList.added(
+            self.__old_extensions_list, self.__new_extensions_list
+        )
+
+    @property
+    def updated(self):
+        return ContentExtensionsList.updated(
+            self.__old_extensions_list, self.__new_extensions_list
+        )
