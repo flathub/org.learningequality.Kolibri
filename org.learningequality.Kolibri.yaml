@@ -22,23 +22,39 @@ add-extensions:
     no-autodownload: true
 
 modules:
+  - python3-ifaddr.json
+
+  - name: python-zeroconf-py2compat
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=${FLATPAK_DEST} .
+    sources:
+      - type: git
+        url: https://github.com/learningequality/python-zeroconf-py2compat.git
+        branch: master
+      - type: patch
+        path: python-zeroconf-py2compat-0001-Replace-ifcfg-with-ifaddr.patch
+
   - name: python3-kolibri
     buildsystem: simple
     build-commands:
-      - pip3 install --exists-action=i --no-index --find-links="file://${PWD}/wheel" --prefix=${FLATPAK_DEST}
-        kolibri
+      - pip3 install --exists-action=i --no-index --find-links="file://${PWD}/wheel" --prefix=${FLATPAK_DEST} kolibri
       - cp -R git/kolibri/core ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
       - cp -R git/kolibri/deployment ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
       - cp -R git/kolibri/locale ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
       - cp -R git/kolibri/plugins ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
       - cp -R git/kolibri/utils ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/
+      - rm -r ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/dist/zeroconf.py
+      - ln -s ${FLATPAK_DEST}/lib/python3.7/site-packages/zeroconf.py ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/dist/zeroconf.py
+      - ln -s ${FLATPAK_DEST}/lib/python3.7/site-packages/ifaddr ${FLATPAK_DEST}/lib/python3.7/site-packages/kolibri/dist/ifaddr
       - mkdir -p ${FLATPAK_DEST}/libexec
       - mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/b5/9e/64404d04d54b5d15da61adace90d72b99736526ce0e66c1f487f9c0c14a4/kolibri-0.13.2-py2.py3-none-any.whl
-        sha256: bfacca80f6ade8e605c370cde1924dd2f0262d8eece94e4f5628cbe2177465af
+        url: https://buildkite.com/organizations/learningequality/pipelines/kolibri-python-package/builds/664/jobs/0d017578-26b9-45c7-a1fd-4e2bd94b1139/artifacts/d6bc3b59-5e63-4681-9788-3c6eb6431d8c
+        sha256: 29efe4af115b91675b1f070d6a0ee686c454b7f1e0d46fd985073dd31b3a5767
         dest: wheel
+        dest-filename: kolibri-0.13.3a0.dev0+git.49.gb4428b46-py2.py3-none-any.whl
       - type: git
         url: https://github.com/jamalex/kolibri.git
         # branch: content_fallback_paths

@@ -1,0 +1,53 @@
+From f70331ef77574701ea59850259805dd4779bff8d Mon Sep 17 00:00:00 2001
+From: Dylan McCall <dylan@endlessm.com>
+Date: Fri, 22 May 2020 12:35:47 -0700
+Subject: [PATCH] Replace ifcfg with ifaddr
+
+---
+ setup.py    |  2 +-
+ zeroconf.py | 11 +++++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 26be3f9..73fd822 100755
+--- a/setup.py
++++ b/setup.py
+@@ -59,5 +59,5 @@ setup(
+         "Service Discovery",
+         "mDNS",
+     ],
+-    install_requires=["ifcfg", "six"],
++    install_requires=["ifaddr", "six"],
+ )
+diff --git a/zeroconf.py b/zeroconf.py
+index dd76f92..bc2b534 100644
+--- a/zeroconf.py
++++ b/zeroconf.py
+@@ -34,7 +34,7 @@ import threading
+ import time
+ from functools import reduce
+ 
+-import ifcfg
++import ifaddr
+ from six import binary_type, indexbytes, int2byte, iteritems, text_type
+ from six.moves import xrange
+ 
+@@ -1735,7 +1735,14 @@ if "ANDROID_ARGUMENT" in os.environ:
+ 
+ else:
+      def get_network_interfaces():
+-         return ifcfg.interfaces().values()
++         interfaces = []
++         for adapter in ifaddr.get_adapters():
++             for ip in adapter.ips:
++                 interfaces.append({
++                     "inet": ip.ip if ip.is_IPv4 else "",
++                     "inet6": ip.ip if ip.is_IPv6 else ""
++                 })
++         return interfaces
+ 
+ 
+ def get_all_addresses():
+-- 
+2.26.2
+
