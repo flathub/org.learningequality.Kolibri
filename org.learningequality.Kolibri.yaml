@@ -7,7 +7,6 @@ command: kolibri-gnome
 
 finish-args:
   - --device=dri
-  - --env=X_KOLIBRI_HOME_TEMPLATE=/app/share/kolibri-default-home
   - --share=ipc
   - --share=network
   - --socket=fallback-x11
@@ -62,11 +61,13 @@ modules:
 
   - name: kolibri-installer-gnome
     buildsystem: meson
+    config-opts:
+      - -Dkolibri_home_template_dir=/app/share/kolibri-home-template
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: e6389043556dae4746a612363831a87b44b6a656
+        commit: ac505f3d1b6c9c04180f17fc735b7914919f1baf
 
   - name: kolibri-home-template
     buildsystem: simple
