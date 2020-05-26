@@ -30,9 +30,8 @@ modules:
       - mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri
     sources:
       - type: file
-        url: https://buildkite.com/organizations/learningequality/pipelines/kolibri-python-package/builds/710/jobs/6ff72ab2-7468-42bb-95bd-de618dcda1d8/artifacts/2c807dfe-f391-420a-af66-9182408f62f2
-        sha256: 7858eeac3d2fd0cbd11872163bba8db8a9904309d56ea963900aca2e27cf2159
-        dest-filename: kolibri-0.13.3a0.dev0+git.59.g9a3dfc01-py2.py3-none-any.whl
+        url: https://storage.googleapis.com/le-downloads/kolibri-0.13.3a0.dev0%2Bgit.62.g5d05c61b-py2.py3-none-any.whl
+        sha256: 156ddb12a2d83ba763e36b25d986f9fdd21963345f60bef3bfdd824ac58e831b
 
   - python3-requests.json
 
