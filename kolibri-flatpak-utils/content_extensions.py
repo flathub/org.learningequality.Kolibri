@@ -1,5 +1,5 @@
+import itertools
 import json
-import operator
 import os
 import re
 
@@ -8,33 +8,73 @@ from configparser import ConfigParser
 from kolibri_gnome.globals import KOLIBRI_HOME
 
 CONTENT_EXTENSIONS_DIR = "/app/share/kolibri-content"
-
 CONTENT_EXTENSION_RE = r"^org.learningequality.Kolibri.Content.(?P<name>\w+)$"
 
 
-class KolibriContentChannel(object):
-    def __init__(self, channel_id, node_ids, exclude_node_ids):
-        self.__channel_id = channel_id
-        self.__node_ids = node_ids
-        self.__exclude_node_ids = exclude_node_ids
+class ContentExtensionsList(object):
+    """
+    Keeps track of a list of content extensions, either cached from a file in
+    $KOLIBRI_HOME, or generated from /.flatpak-info. Multiple lists can be
+    compared to detect changes in the environment.
+    """
+
+    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(
+        KOLIBRI_HOME, "content-extensions.json"
+    )
+
+    def __init__(self, extensions=set()):
+        self.__extensions = set(extensions)
 
     @classmethod
-    def from_json(cls, json):
-        return cls(
-            json.get("channel_id"), json.get("node_ids"), json.get("exclude_node_ids")
-        )
+    def from_flatpak_info(cls):
+        extensions = set()
 
-    @property
-    def channel_id(self):
-        return self.__channel_id
+        flatpak_info = ConfigParser()
+        flatpak_info.read("/.flatpak-info")
+        app_extensions = flatpak_info.get("Instance", "app-extensions", fallback="")
+        for extension_str in app_extensions.split(";"):
+            extension_ref, extension_commit = extension_str.split("=")
+            content_extension = ContentExtension.from_ref(
+                extension_ref, commit=extension_commit
+            )
+            if content_extension and content_extension.is_valid():
+                extensions.add(content_extension)
 
-    @property
-    def node_ids(self):
-        return self.__node_ids
+        return cls(extensions)
 
-    @property
-    def exclude_node_ids(self):
-        return self.__exclude_node_ids
+    @classmethod
+    def from_cache(cls):
+        extensions = set()
+
+        try:
+            with open(cls.CONTENT_EXTENSIONS_STATE_PATH, "r") as file:
+                extensions_json = json.load(file)
+        except (OSError, json.JSONDecodeError):
+            pass
+        else:
+            extensions = set(map(ContentExtension.from_json, extensions_json))
+
+        return cls(extensions)
+
+    def write_to_cache(self):
+        with open(self.CONTENT_EXTENSIONS_STATE_PATH, "w") as file:
+            extensions_json = list(map(ContentExtension.to_json, self.__extensions))
+            json.dump(extensions_json, file)
+
+    def get_extension(self, ref):
+        return next((extension for extension in self.__extensions if extension.ref == ref), None)
+
+    def __iter__(self):
+        return iter(self.__extensions)
+
+    @staticmethod
+    def compare(old, new):
+        changed_extensions = old.__extensions.symmetric_difference(new.__extensions)
+        changed_refs = set(extension.ref for extension in changed_extensions)
+        for ref in changed_refs:
+            old_extension = old.get_extension(ref)
+            new_extension = new.get_extension(ref)
+            yield ContentExtensionCompare(ref, old_extension, new_extension)
 
 
 class ContentExtension(object):
@@ -114,9 +154,16 @@ class ContentExtension(object):
         return self.__content_json
 
     @property
-    def channels(self):
+    def __channels(self):
         channels_json = self.content_json.get("channels", [])
-        return set(map(KolibriContentChannel.from_json, channels_json))
+        return set(map(ContentChannel.from_json, channels_json))
+
+    @property
+    def channel_ids(self):
+        return set(channel.channel_id for channel in self.__channels)
+
+    def get_channel(self, channel_id):
+        return next((channel for channel in self.__channels if channel.channel_id == channel_id), None)
 
     @property
     def base_dir(self):
@@ -131,111 +178,124 @@ class ContentExtension(object):
         return os.path.join(self.content_dir, "content.json")
 
 
-class ContentExtensionsList(object):
-    """
-    Keeps track of a list of content extensions, either cached from a file in
-    $KOLIBIR_HOME, or generated from /.flatpak-info. Multiple lists can be
-    compared to detect changes in the environment.
-    """
-
-    CONTENT_EXTENSIONS_STATE_PATH = os.path.join(
-        KOLIBRI_HOME, "content-extensions.json"
-    )
-
-    def __init__(self, extensions=set()):
-        self.__extensions = set(extensions)
+class ContentChannel(object):
+    def __init__(self, channel_id, include_node_ids, exclude_node_ids):
+        self.__channel_id = channel_id
+        self.__include_node_ids = include_node_ids or []
+        self.__exclude_node_ids = exclude_node_ids or []
 
     @classmethod
-    def from_flatpak_info(cls):
-        extensions = set()
+    def from_json(cls, json):
+        return cls(
+            json.get("channel_id"), json.get("node_ids"), json.get("exclude_node_ids")
+        )
 
-        flatpak_info = ConfigParser()
-        flatpak_info.read("/.flatpak-info")
-        app_extensions = flatpak_info.get("Instance", "app-extensions", fallback="")
-        for extension_str in app_extensions.split(";"):
-            extension_ref, extension_commit = extension_str.split("=")
-            content_extension = ContentExtension.from_ref(
-                extension_ref, commit=extension_commit
-            )
-            if content_extension and content_extension.is_valid():
-                extensions.add(content_extension)
+    @property
+    def channel_id(self):
+        return self.__channel_id
 
-        return cls(extensions)
+    @property
+    def include_node_ids(self):
+        return set(self.__include_node_ids)
 
-    @classmethod
-    def from_cache(cls):
-        extensions = set()
+    @property
+    def exclude_node_ids(self):
+        return set(self.__exclude_node_ids)
 
-        try:
-            with open(cls.CONTENT_EXTENSIONS_STATE_PATH, "r") as file:
-                extensions_json = json.load(file)
-        except (OSError, json.JSONDecodeError):
-            pass
+
+class ContentExtensionCompare(object):
+    def __init__(self, ref, old_extension, new_extension):
+        self.__ref = ref
+        self.__old_extension = old_extension
+        self.__new_extension = new_extension
+
+    @property
+    def ref(self):
+        return self.__ref
+    
+    def compare_channels(self):
+        for channel_id in self.__all_channel_ids:
+            old_channel = self.__old_channel(channel_id)
+            new_channel = self.__new_channel(channel_id)
+            yield ContentChannelCompare(channel_id, old_channel, new_channel)
+
+    def __old_channel(self, channel_id):
+        if self.__old_extension:
+            return self.__old_extension.get_channel(channel_id)
         else:
-            extensions = set(map(ContentExtension.from_json, extensions_json))
+            return None
 
-        return cls(extensions)
-
-    def write_to_cache(self):
-        with open(self.CONTENT_EXTENSIONS_STATE_PATH, "w") as file:
-            extensions_json = list(map(ContentExtension.to_json, self.__extensions))
-            json.dump(extensions_json, file)
-
-    @property
-    def content_fallback_dirs(self):
-        return list(map(operator.attrgetter("content_dir"), self.__extensions))
-
-    def diff(self, other):
-        return ContentExtensionsDiff(self, other)
-
-    @staticmethod
-    def removed(old, new):
-        removed_refs = old.__refs.difference(new.__refs)
-        return old.__filter_extensions(removed_refs)
-
-    @staticmethod
-    def added(old, new):
-        added_refs = new.__refs.difference(old.__refs)
-        return new.__filter_extensions(added_refs)
-
-    @staticmethod
-    def updated(old, new):
-        common_refs = old.__refs.intersection(new.__refs)
-        old_extensions = old.__filter_extensions(common_refs)
-        new_extensions = new.__filter_extensions(common_refs)
-        return new_extensions.difference(old_extensions)
+    def __new_channel(self, channel_id):
+        if self.__new_extension:
+            return self.__new_extension.get_channel(channel_id)
+        else:
+            return None
 
     @property
-    def __extensions_dict(self):
-        return dict((extension.ref, extension) for extension in self.__extensions)
+    def __all_channel_ids(self):
+        return set(itertools.chain(self.__old_channel_ids, self.__new_channel_ids))
 
     @property
-    def __refs(self):
-        return set(map(operator.attrgetter("ref"), self.__extensions))
+    def __old_channel_ids(self):
+        if self.__old_extension:
+            return self.__old_extension.channel_ids
+        else:
+            return set()
 
-    def __get_extension(self, ref):
-        return self.__extensions_dict.get(ref)
+    @property
+    def __new_channel_ids(self):
+        if self.__new_extension:
+            return self.__new_extension.channel_ids
+        else:
+            return set()
 
-    def __filter_extensions(self, refs):
-        return set(map(self.__get_extension, refs))
 
+class ContentChannelCompare(object):
+    def __init__(self, channel_id, old_channel, new_channel):
+        self.__channel_id = channel_id
+        self.__old_channel = old_channel
+        self.__new_channel = new_channel
 
-class ContentExtensionsDiff(object):
-    def __init__(self, old_extensions_list, new_extensions_list):
-        self.__old_extensions_list = old_extensions_list
-        self.__new_extensions_list = new_extensions_list
+    @property
+    def channel_id(self):
+        return self.__channel_id
 
-    def removed(self):
-        return ContentExtensionsList.removed(
-            self.__old_extensions_list, self.__new_extensions_list
-        )
-
+    @property
     def added(self):
-        return ContentExtensionsList.added(
-            self.__old_extensions_list, self.__new_extensions_list
-        )
+        return self.__new_channel and not self.__old_channel
 
-    def updated(self):
-        return ContentExtensionsList.updated(
-            self.__old_extensions_list, self.__new_extensions_list
-        )
+    @property
+    def removed(self):
+        return self.__old_channel and not self.__new_channel
+
+    @property
+    def old_include_node_ids(self):
+        return self.__old_channel.include_node_ids
+
+    @property
+    def new_include_node_ids(self):
+        return self.__new_channel.include_node_ids
+
+    @property
+    def include_nodes_added(self):
+        return self.new_include_node_ids.difference(self.old_include_node_ids)
+
+    @property
+    def include_nodes_removed(self):
+        return self.old_include_node_ids.difference(self.new_include_node_ids)
+
+    @property
+    def old_exclude_node_ids(self):
+        return self.__old_channel.exclude_node_ids
+
+    @property
+    def new_exclude_node_ids(self):
+        return self.__new_channel.exclude_node_ids
+
+    @property
+    def exclude_nodes_added(self):
+        return self.new_exclude_node_ids.difference(self.old_exclude_node_ids)
+
+    @property
+    def exclude_nodes_removed(self):
+        return self.old_exclude_node_ids.difference(self.new_exclude_node_ids)
