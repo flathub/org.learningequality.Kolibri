@@ -1,0 +1,86 @@
+---
+app-id: org.learningequality.Kolibri
+runtime: org.gnome.Platform
+runtime-version: '3.36'
+sdk: org.gnome.Sdk
+command: kolibri-gnome
+
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --socket=x11
+
+add-extensions:
+  org.learningequality.Kolibri.Content:
+    version: '1.0'
+    directory: share/kolibri-content
+    subdirectories: true
+    no-autodownload: true
+
+modules:
+  - name: python3-kolibri
+    buildsystem: simple
+    build-commands:
+      - pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} kolibri
+      - install -d ${FLATPAK_DEST}/libexec
+      - mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri
+    sources:
+      - type: file
+        url: https://storage.googleapis.com/le-downloads/kolibri-0.13.3a0.dev0%2Bgit.62.g5d05c61b-py2.py3-none-any.whl
+        sha256: 156ddb12a2d83ba763e36b25d986f9fdd21963345f60bef3bfdd824ac58e831b
+
+  - python3-requests.json
+
+  - python3-virtualenv-api.json
+
+  - name: pyeverywhere
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=${FLATPAK_DEST} .
+    sources:
+      - type: git
+        url: https://github.com/kollivier/pyeverywhere.git
+        # branch: dev
+        commit: 63cdb6dd642ebce4af6a5134dbabcd4bd4f2a96d
+
+  - name: kolibri-installer-gnome
+    buildsystem: meson
+    config-opts:
+      - -Dkolibri_home_template_dir=/app/share/kolibri-home-template
+    sources:
+      - type: git
+        url: https://github.com/learningequality/kolibri-installer-gnome.git
+        # branch: master
+        commit: ac505f3d1b6c9c04180f17fc735b7914919f1baf
+
+  - name: kolibri-home-template
+    buildsystem: simple
+    build-options:
+      env:
+        KOLIBRI_HOME: /app/share/kolibri-home-template
+    build-commands:
+      - install -d ${KOLIBRI_HOME}
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage migrate
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage collectstatic
+      - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage deprovision
+      - rm -r ${KOLIBRI_HOME}/logs
+      - rm -r ${KOLIBRI_HOME}/sessions
+      - rm -r ${KOLIBRI_HOME}/process_cache
+      - touch ${KOLIBRI_HOME}/was_preseeded
+
+  - name: kolibri-content-dir
+    buildsystem: simple
+    build-commands:
+      - install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content
+
+  - name: kolibri-flatpak-utils
+    buildsystem: simple
+    build-commands:
+      - pip3 install --prefix=${FLATPAK_DEST} .
+    sources:
+      - type: dir
+        path: kolibri-flatpak-utils

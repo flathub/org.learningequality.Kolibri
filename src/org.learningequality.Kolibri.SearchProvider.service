@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.learningequality.Kolibri.SearchProvider
-Exec=/app/bin/kolibri_search_service.sh
