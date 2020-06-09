@@ -99,3 +99,33 @@ modules:
     sources:
       - type: dir
         path: kolibri-flatpak-utils
+
+  - name: cleanup-unused-locales
+    buildsystem: simple
+    build-commands:
+      - >
+        ./cleanup-unused-locales.py
+        -l /app/share/locale
+        -l /app/lib/python3.7/site-packages/kolibri/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/mptt/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django_filters/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/pycountry/locales
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/flatpages/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/admindocs/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/sites/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/sessions/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/gis/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/auth/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/contenttypes/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/postgres/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/redirects/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/humanize/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/admin/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/conf/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/oidc_provider/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/kolibri_exercise_perseus_plugin/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/rest_framework/locale
+    sources:
+      - type: file
+        path: cleanup-unused-locales.py
+
