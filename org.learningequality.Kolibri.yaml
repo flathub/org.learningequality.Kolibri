@@ -78,9 +78,9 @@ modules:
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage migrate
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage collectstatic
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage deprovision
-      - rm -r ${KOLIBRI_HOME}/logs
-      - rm -r ${KOLIBRI_HOME}/sessions
-      - rm -r ${KOLIBRI_HOME}/process_cache
+      - rm -rf ${KOLIBRI_HOME}/logs
+      - rm -rf ${KOLIBRI_HOME}/sessions
+      - rm -rf ${KOLIBRI_HOME}/process_cache
       - touch ${KOLIBRI_HOME}/was_preseeded
 
   - name: kolibri-content-dir
