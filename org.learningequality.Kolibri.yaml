@@ -22,6 +22,17 @@ add-extensions:
     no-autodownload: true
 
 modules:
+  - name: iproute2
+    buildsystem: autotools
+    make-install-args:
+      - PREFIX=${FLATPAK_DEST}
+      - SBINDIR=${FLATPAK_DEST}/bin
+      - CONFDIR=${FLATPAK_DEST}/etc/iproute2
+    sources:
+      - type: archive
+        url: https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.7.0.tar.xz
+        sha256: 725dc7ba94aae54c6f8d4223ca055d9fb4fe89d6994b1c03bfb4411c4dd10f21
+
   - name: python3-kolibri
     buildsystem: simple
     build-commands:
@@ -67,9 +78,9 @@ modules:
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage migrate
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage collectstatic
       - yes 'yes' | ${FLATPAK_DEST}/libexec/kolibri manage deprovision
-      - rm -r ${KOLIBRI_HOME}/logs
-      - rm -r ${KOLIBRI_HOME}/sessions
-      - rm -r ${KOLIBRI_HOME}/process_cache
+      - rm -rf ${KOLIBRI_HOME}/logs
+      - rm -rf ${KOLIBRI_HOME}/sessions
+      - rm -rf ${KOLIBRI_HOME}/process_cache
       - touch ${KOLIBRI_HOME}/was_preseeded
 
   - name: kolibri-content-dir
