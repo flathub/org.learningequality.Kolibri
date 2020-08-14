@@ -39,6 +39,21 @@ modules:
       - pip3 install --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} kolibri
       - install -d ${FLATPAK_DEST}/libexec
       - mv ${FLATPAK_DEST}/bin/kolibri ${FLATPAK_DEST}/libexec/kolibri
+    cleanup:
+      - /lib/python3.7/site-packages/kolibri/dist/cext/cp27
+      - /lib/python3.7/site-packages/kolibri/dist/cext/cp34
+      - /lib/python3.7/site-packages/kolibri/dist/cext/cp35
+      - /lib/python3.7/site-packages/kolibri/dist/cext/cp36
+      - /lib/python3.7/site-packages/kolibri/dist/cext/cp37/Windows
+      - /lib/python3.7/site-packages/kolibri/dist/cheroot/test
+      - /lib/python3.7/site-packages/kolibri/dist/cherrypy/test
+      - /lib/python3.7/site-packages/kolibri/dist/Cryptodome/SelfTest
+      - /lib/python3.7/site-packages/kolibri/dist/django_js_reverse/tests
+      - /lib/python3.7/site-packages/kolibri/dist/future/backports/test
+      - /lib/python3.7/site-packages/kolibri/dist/more_itertools/tests
+      - /lib/python3.7/site-packages/kolibri/dist/py2only
+      - /lib/python3.7/site-packages/kolibri/dist/sqlalchemy/testing
+      - /lib/python3.7/site-packages/kolibri/dist/tzlocal/test_data
     sources:
       - type: file
         url: https://storage.googleapis.com/le-downloads/kolibri-0.13.3a0.dev0%2Bgit.62.g5d05c61b-py2.py3-none-any.whl
@@ -95,3 +110,33 @@ modules:
     sources:
       - type: dir
         path: kolibri-flatpak-utils
+
+  - name: cleanup-unused-locales
+    buildsystem: simple
+    build-commands:
+      - >
+        ./cleanup-unused-locales.py
+        -l /app/share/locale
+        -l /app/lib/python3.7/site-packages/kolibri/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/mptt/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django_filters/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/pycountry/locales
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/flatpages/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/admindocs/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/sites/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/sessions/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/gis/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/auth/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/contenttypes/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/postgres/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/redirects/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/humanize/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/contrib/admin/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/django/conf/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/oidc_provider/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/kolibri_exercise_perseus_plugin/locale
+        /app/lib/python3.7/site-packages/kolibri/dist/rest_framework/locale
+    sources:
+      - type: file
+        path: cleanup-unused-locales.py
+
