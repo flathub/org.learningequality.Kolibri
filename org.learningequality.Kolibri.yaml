@@ -106,10 +106,12 @@ modules:
       - >
         rm -rf
         /app/lib/python3.7/site-packages/kolibri/dist/cext/cp27
-        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp34
-        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp35
-        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp36
+        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp34/Windows
+        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp35/Windows
+        /app/lib/python3.7/site-packages/kolibri/dist/cext/cp36/Windows
         /app/lib/python3.7/site-packages/kolibri/dist/cext/cp37/Windows
+      - >
+        rm -rf
         /app/lib/python3.7/site-packages/kolibri/dist/cheroot/test
         /app/lib/python3.7/site-packages/kolibri/dist/cherrypy/test
         /app/lib/python3.7/site-packages/kolibri/dist/colorlog/tests
