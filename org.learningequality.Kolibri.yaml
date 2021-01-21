@@ -13,6 +13,8 @@ finish-args:
   - --socket=pulseaudio
   - --socket=wayland
   - --socket=x11
+  - --system-talk-name=org.learningequality.Kolibri.Daemon
+  - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -64,7 +66,7 @@ modules:
         # branch: dev
         commit: 63cdb6dd642ebce4af6a5134dbabcd4bd4f2a96d
 
-  - name: kolibri-installer-gnome
+  - name: kolibri-gnome
     buildsystem: meson
     config-opts:
       - -Dkolibri_home_template_dir=/app/share/kolibri-home-template
@@ -72,7 +74,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: f0e3a8cc7587720812a698b6fec4a0a9a9216f7f
+        commit: 5fc271d66fab38f2470ae1442dc5c82e966583f2
 
   - name: kolibri-content-dir
     buildsystem: simple
