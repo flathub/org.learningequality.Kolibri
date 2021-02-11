@@ -52,6 +52,8 @@ modules:
       - rm -rf ${KOLIBRI_HOME}/process_cache
       - touch ${KOLIBRI_HOME}/was_preseeded
 
+  - python3-setproctitle.json
+
   - python3-requests.json
 
   - python3-virtualenv-api.json
@@ -74,7 +76,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: b93721b28bd35f079984f726430d640bbadc39a2
+        commit: ea97193d21485fd9d9d52df684c2ea34b5a777bc
 
   - name: kolibri-content-dir
     buildsystem: simple
