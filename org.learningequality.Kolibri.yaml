@@ -83,6 +83,12 @@ modules:
     build-commands:
       - install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content
 
+  - name: python37-python38-migration-symlink
+    buildsystem: simple
+    build-commands:
+      - install -d -m 755 /app/lib/python3.7/site-packages
+      - ln -s /app/lib/python3.8/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
+
   - name: python3-kolibri-cleanup
     buildsystem: simple
     build-commands:
