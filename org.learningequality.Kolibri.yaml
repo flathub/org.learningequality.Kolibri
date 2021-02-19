@@ -37,6 +37,8 @@ modules:
 
   - python3-kolibri.json
 
+  - python3-kolibri-pytz.json
+
   - name: kolibri-home-template
     buildsystem: simple
     build-options:
