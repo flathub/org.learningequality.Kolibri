@@ -13,8 +13,11 @@ finish-args:
   - --socket=pulseaudio
   - --socket=wayland
   - --system-talk-name=org.learningequality.Kolibri.Daemon
+  - --system-talk-name=org.freedesktop.UDisks2
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
+  - --filesystem=/media
+  - --filesystem=/run/media
 
 add-extensions:
   org.learningequality.Kolibri.Content:
