@@ -15,6 +15,7 @@ finish-args:
   - --socket=x11
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
+  - --env=KOLIBRI_HTTP_PORT=0
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -76,7 +77,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: ea97193d21485fd9d9d52df684c2ea34b5a777bc
+        commit: 8eb89c7645170bb8782839036ae00c8033f7c099
 
   - name: kolibri-content-dir
     buildsystem: simple
