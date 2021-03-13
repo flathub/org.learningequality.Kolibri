@@ -40,6 +40,8 @@ modules:
 
   - python3-kolibri-pytz.json
 
+  - python3-kolibri-app-desktop-xdg-plugin.json
+
   - name: kolibri-home-template
     buildsystem: simple
     build-options:
@@ -79,7 +81,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 8eb89c7645170bb8782839036ae00c8033f7c099
+        commit: 1452c0cd48f636a01cfd6c108af58c0fc0499786
 
   - name: kolibri-content-dir
     buildsystem: simple
