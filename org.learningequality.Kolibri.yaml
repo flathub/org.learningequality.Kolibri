@@ -81,7 +81,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 1452c0cd48f636a01cfd6c108af58c0fc0499786
+        commit: 79f50f187c329742384c9cf971e6c8dfe645398f
 
   - name: kolibri-content-dir
     buildsystem: simple
