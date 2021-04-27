@@ -145,3 +145,11 @@ modules:
     sources:
       - type: file
         path: cleanup-unused-locales.py
+
+  - name: kolibri-tools
+    buildsystem: simple
+    build-commands:
+      - install -m 755 -t ${FLATPAK_DEST}/bin kolibri-listcontent.py
+    sources:
+      - type: dir
+        path: tools
