@@ -29,7 +29,7 @@ output_format_str_list = list(map(operator.attrgetter("name"), OutputFormat))
     "--format",
     "output_format_str",
     type=click.Choice(output_format_str_list, case_sensitive=False),
-    default=OutputFormat.INI.name,
+    default=OutputFormat.PLAIN.name,
     help="Use the specified output format",
 )
 @click.option(
