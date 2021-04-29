@@ -165,7 +165,10 @@ class OutputWriter_Plain(OutputWriter):
                     click.echo(
                         "+ {id} ({title}) [{kind}]".format(
                             id=node.id,
-                            title=click.style(node.title, bold=True),
+                            title=" / ".join(
+                                click.style(breadcrumb, bold=True)
+                                for breadcrumb in _node_breadcrumbs(node)
+                            ),
                             kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
@@ -174,7 +177,10 @@ class OutputWriter_Plain(OutputWriter):
                     click.echo(
                         "- {id} ({title}) [{kind}]".format(
                             id=node.id,
-                            title=node.title,
+                            title=" / ".join(
+                                click.style(breadcrumb, bold=True)
+                                for breadcrumb in _node_breadcrumbs(node)
+                            ),
                             kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
@@ -216,7 +222,9 @@ class OutputWriter_INI(OutputWriter):
         output.write("{key} =\n".format(key=key))
         for node in nodes:
             output.write(
-                "  # {title} [{kind}]\n".format(title=node.title, kind=node.kind)
+                "  # {title} [{kind}]\n".format(
+                    title=" / ".join(_node_breadcrumbs(node)), kind=node.kind
+                )
             )
             output.write("  {id}\n".format(id=node.id))
 
@@ -334,6 +342,15 @@ class ContentList(object):
                     pick_nodes_queue.extend(node.children.all())
             elif node in pick_nodes:
                 self.__include_nodes.add(node)
+
+
+def _node_breadcrumbs(node):
+    titles = [node.title]
+    while node.parent:
+        node = node.parent
+        if node.content_id != node.channel_id:
+            titles.append(node.title)
+    return reversed(titles)
 
 
 def _get_leaf_nodes(node):
