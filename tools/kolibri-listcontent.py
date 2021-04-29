@@ -166,7 +166,7 @@ class OutputWriter_Plain(OutputWriter):
                         "+ {id} ({title}) [{kind}]".format(
                             id=node.id,
                             title=click.style(node.title, bold=True),
-                            kind=click.style(_node_kind_str(node), dim=True),
+                            kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
                     )
@@ -175,7 +175,7 @@ class OutputWriter_Plain(OutputWriter):
                         "- {id} ({title}) [{kind}]".format(
                             id=node.id,
                             title=node.title,
-                            kind=click.style(_node_kind_str(node), dim=True),
+                            kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
                     )
@@ -216,9 +216,7 @@ class OutputWriter_INI(OutputWriter):
         output.write("{key} =\n".format(key=key))
         for node in nodes:
             output.write(
-                "  # {title} [{kind}]\n".format(
-                    title=node.title, kind=_node_kind_str(node)
-                )
+                "  # {title} [{kind}]\n".format(title=node.title, kind=node.kind)
             )
             output.write("  {id}\n".format(id=node.id))
 
@@ -336,13 +334,6 @@ class ContentList(object):
                     pick_nodes_queue.extend(node.children.all())
             elif node in pick_nodes:
                 self.__include_nodes.add(node)
-
-
-def _node_kind_str(node):
-    if node.kind == "topic":
-        return "topic - {children}".format(children=_get_leaf_nodes(node).count())
-    else:
-        return "{kind}".format(kind=node.kind)
 
 
 def _get_leaf_nodes(node):
