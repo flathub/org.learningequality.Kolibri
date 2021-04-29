@@ -29,7 +29,7 @@ output_format_str_list = list(map(operator.attrgetter("name"), OutputFormat))
     "--format",
     "output_format_str",
     type=click.Choice(output_format_str_list, case_sensitive=False),
-    default=OutputFormat.INI.name,
+    default=OutputFormat.PLAIN.name,
     help="Use the specified output format",
 )
 @click.option(
@@ -165,8 +165,11 @@ class OutputWriter_Plain(OutputWriter):
                     click.echo(
                         "+ {id} ({title}) [{kind}]".format(
                             id=node.id,
-                            title=click.style(node.title, bold=True),
-                            kind=click.style(_node_kind_str(node), dim=True),
+                            title=" / ".join(
+                                click.style(breadcrumb, bold=True)
+                                for breadcrumb in _node_breadcrumbs(node)
+                            ),
+                            kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
                     )
@@ -174,8 +177,11 @@ class OutputWriter_Plain(OutputWriter):
                     click.echo(
                         "- {id} ({title}) [{kind}]".format(
                             id=node.id,
-                            title=node.title,
-                            kind=click.style(_node_kind_str(node), dim=True),
+                            title=" / ".join(
+                                click.style(breadcrumb, bold=True)
+                                for breadcrumb in _node_breadcrumbs(node)
+                            ),
+                            kind=click.style(node.kind, dim=True),
                         ),
                         file=output,
                     )
@@ -217,7 +223,7 @@ class OutputWriter_INI(OutputWriter):
         for node in nodes:
             output.write(
                 "  # {title} [{kind}]\n".format(
-                    title=node.title, kind=_node_kind_str(node)
+                    title=" / ".join(_node_breadcrumbs(node)), kind=node.kind
                 )
             )
             output.write("  {id}\n".format(id=node.id))
@@ -338,11 +344,13 @@ class ContentList(object):
                 self.__include_nodes.add(node)
 
 
-def _node_kind_str(node):
-    if node.kind == "topic":
-        return "topic - {children}".format(children=_get_leaf_nodes(node).count())
-    else:
-        return "{kind}".format(kind=node.kind)
+def _node_breadcrumbs(node):
+    titles = [node.title]
+    while node.parent:
+        node = node.parent
+        if node.content_id != node.channel_id:
+            titles.append(node.title)
+    return reversed(titles)
 
 
 def _get_leaf_nodes(node):
