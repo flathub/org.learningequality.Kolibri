@@ -120,11 +120,8 @@ modules:
         /app/lib/python3.8/site-packages/kolibri/dist/rest_framework/locale
       - >
         rm -rf
+        /app/lib/python3.8/site-packages/kolibri/dist/cext/*/Windows
         /app/lib/python3.8/site-packages/kolibri/dist/cext/cp27
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/cp34/Windows
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/cp35/Windows
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/cp36/Windows
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/cp37/Windows
       - >
         rm -rf
         /app/lib/python3.8/site-packages/kolibri/dist/cheroot/test
