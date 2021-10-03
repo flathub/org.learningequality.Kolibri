@@ -121,6 +121,7 @@ modules:
       - >
         rm -rf
         /app/lib/python3.8/site-packages/kolibri/dist/cext/*/Windows
+        /app/lib/python3.8/site-packages/kolibri/dist/cext/*/linux/armv?l
         /app/lib/python3.8/site-packages/kolibri/dist/cext/cp27
       - >
         rm -rf
