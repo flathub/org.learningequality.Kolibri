@@ -1,7 +1,7 @@
 ---
 app-id: org.learningequality.Kolibri
 runtime: org.gnome.Platform
-runtime-version: '40'
+runtime-version: '41'
 sdk: org.gnome.Sdk
 command: kolibri-gnome
 
@@ -95,7 +95,7 @@ modules:
     buildsystem: simple
     build-commands:
       - install -d -m 755 /app/lib/python3.7/site-packages
-      - ln -s /app/lib/python3.8/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
+      - ln -s /app/lib/python3.9/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
@@ -103,46 +103,46 @@ modules:
       - >
         ./cleanup-unused-locales.py
         -l /app/share/locale
-        -l /app/lib/python3.8/site-packages/kolibri/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/conf/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/admin/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/admindocs/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/auth/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/contenttypes/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/flatpages/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/gis/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/humanize/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/postgres/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/redirects/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/sessions/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django/contrib/sites/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/django_filters/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/kolibri_exercise_perseus_plugin/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/mptt/locale
-        /app/lib/python3.8/site-packages/kolibri/dist/pycountry/locales
-        /app/lib/python3.8/site-packages/kolibri/dist/rest_framework/locale
+        -l /app/lib/python3.9/site-packages/kolibri/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/conf/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/admin/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/admindocs/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/auth/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/contenttypes/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/flatpages/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/gis/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/humanize/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/postgres/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/redirects/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/sessions/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django/contrib/sites/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/django_filters/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/kolibri_exercise_perseus_plugin/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/mptt/locale
+        /app/lib/python3.9/site-packages/kolibri/dist/pycountry/locales
+        /app/lib/python3.9/site-packages/kolibri/dist/rest_framework/locale
       - >
         rm -rf
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/*/Windows
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/*/linux/armv?l
-        /app/lib/python3.8/site-packages/kolibri/dist/cext/cp27
+        /app/lib/python3.9/site-packages/kolibri/dist/cext/*/Windows
+        /app/lib/python3.9/site-packages/kolibri/dist/cext/*/linux/armv?l
+        /app/lib/python3.9/site-packages/kolibri/dist/cext/cp27
       - >
         rm -rf
-        /app/lib/python3.8/site-packages/kolibri/dist/cheroot/test
-        /app/lib/python3.8/site-packages/kolibri/dist/cherrypy/test
-        /app/lib/python3.8/site-packages/kolibri/dist/colorlog/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/Cryptodome/SelfTest
-        /app/lib/python3.8/site-packages/kolibri/dist/django_js_reverse/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/future/backports/test
-        /app/lib/python3.8/site-packages/kolibri/dist/future/moves/test
-        /app/lib/python3.8/site-packages/kolibri/dist/ipware/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/metaphone/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/more_itertools/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/py2only
-        /app/lib/python3.8/site-packages/kolibri/dist/pycountry/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/sqlalchemy/testing
-        /app/lib/python3.8/site-packages/kolibri/dist/tempora/tests
-        /app/lib/python3.8/site-packages/kolibri/dist/tzlocal/test_data
+        /app/lib/python3.9/site-packages/kolibri/dist/cheroot/test
+        /app/lib/python3.9/site-packages/kolibri/dist/cherrypy/test
+        /app/lib/python3.9/site-packages/kolibri/dist/colorlog/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/Cryptodome/SelfTest
+        /app/lib/python3.9/site-packages/kolibri/dist/django_js_reverse/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/future/backports/test
+        /app/lib/python3.9/site-packages/kolibri/dist/future/moves/test
+        /app/lib/python3.9/site-packages/kolibri/dist/ipware/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/metaphone/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/more_itertools/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/py2only
+        /app/lib/python3.9/site-packages/kolibri/dist/pycountry/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/sqlalchemy/testing
+        /app/lib/python3.9/site-packages/kolibri/dist/tempora/tests
+        /app/lib/python3.9/site-packages/kolibri/dist/tzlocal/test_data
       - ./move-source-maps-to-debug.py
     sources:
       - type: file
