@@ -35,6 +35,9 @@ modules:
       - type: archive
         url: https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.7.0.tar.xz
         sha256: 725dc7ba94aae54c6f8d4223ca055d9fb4fe89d6994b1c03bfb4411c4dd10f21
+    cleanup:
+      - /include
+      - /share/man
 
   - python3-kolibri.json
 
@@ -120,11 +123,9 @@ modules:
         /app/lib/python3.9/site-packages/kolibri/dist/rest_framework/locale
       - >
         rm -rf
+        /app/lib/python3.9/site-packages/kolibri/dist/cext/*/Windows
+        /app/lib/python3.9/site-packages/kolibri/dist/cext/*/linux/armv?l
         /app/lib/python3.9/site-packages/kolibri/dist/cext/cp27
-        /app/lib/python3.9/site-packages/kolibri/dist/cext/cp34/Windows
-        /app/lib/python3.9/site-packages/kolibri/dist/cext/cp35/Windows
-        /app/lib/python3.9/site-packages/kolibri/dist/cext/cp36/Windows
-        /app/lib/python3.9/site-packages/kolibri/dist/cext/cp37/Windows
       - >
         rm -rf
         /app/lib/python3.9/site-packages/kolibri/dist/cheroot/test
@@ -142,9 +143,12 @@ modules:
         /app/lib/python3.9/site-packages/kolibri/dist/sqlalchemy/testing
         /app/lib/python3.9/site-packages/kolibri/dist/tempora/tests
         /app/lib/python3.9/site-packages/kolibri/dist/tzlocal/test_data
+      - ./move-source-maps-to-debug.py
     sources:
       - type: file
         path: cleanup-unused-locales.py
+      - type: file
+        path: move-source-maps-to-debug.py
 
   - name: kolibri-tools
     buildsystem: simple
