@@ -70,10 +70,9 @@ def main(
     used along with a system like eos-image-builder to replicate the selection
     of Kolibri content from $KOLIBRI_HOME.
 
-    By default, the output will be in an INI format compatible with
+    By default, the output will be a plain list of channels and content.
+    Alternatively, use --format=ini for an INI format compatible with
     eos-image-builder: <https://github.com/endlessm/eos-image-builder/>.
-    Alternatively, use --format=plain for a human-readable list of channels
-    and content.
 
     The output will include every content node that is available in every
     channel that is installed. It is possible to override this behaviour by
@@ -261,6 +260,9 @@ class ContentSelector_ByPickList(ContentSelector):
         q = Q(
             content_id__in=self.__pick_contentnode_content_ids,
             parent__content_id__in=self.__pick_contentnode_parent_content_ids,
+        ) | Q(
+            content_id__in=self.__pick_contentnode_content_ids,
+            parent__content_id=channel_id,
         )
         if self.__or_available:
             q |= Q(available=True)
