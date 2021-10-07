@@ -143,12 +143,9 @@ modules:
         /app/lib/python3.8/site-packages/kolibri/dist/sqlalchemy/testing
         /app/lib/python3.8/site-packages/kolibri/dist/tempora/tests
         /app/lib/python3.8/site-packages/kolibri/dist/tzlocal/test_data
-      - ./move-source-maps-to-debug.py
     sources:
       - type: file
         path: cleanup-unused-locales.py
-      - type: file
-        path: move-source-maps-to-debug.py
 
   - name: kolibri-tools
     buildsystem: simple
