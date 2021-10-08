@@ -151,6 +151,12 @@ modules:
       - type: file
         path: cleanup-unused-locales.py
 
+  - name: kolibri-daemon-path-migration
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/libexec/kolibri-gnome
+      - ln -s /app/libexec/kolibri-app/kolibri-daemon /app/libexec/kolibri-gnome/kolibri-daemon
+
   - name: kolibri-tools
     buildsystem: simple
     build-commands:
