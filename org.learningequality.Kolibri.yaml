@@ -32,9 +32,7 @@ modules:
   - modules/python3-kolibri-desktop-auth-plugin.json
   - modules/kolibri-home-template.json
   - modules/python3-setproctitle.json
-  - modules/python3-requests.json
   - modules/python3-virtualenv-api.json
-  - modules/pyeverywhere.json
 
   - name: kolibri-gnome
     buildsystem: meson
@@ -44,7 +42,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 2186ec14231a6ff735435e8561fc58c819ff19f7
+        commit: a8c21ad15a1f79f5ec4a63627afeae447e6ba1d3
 
   - name: kolibri-content-dir
     buildsystem: simple
