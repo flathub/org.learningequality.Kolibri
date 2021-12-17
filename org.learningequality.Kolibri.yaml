@@ -44,7 +44,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 77515137a0a8872129b64568844dec46e13270c7
+        commit: 1ce62566c53857a13aabb82e960e894ef6c41758
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
