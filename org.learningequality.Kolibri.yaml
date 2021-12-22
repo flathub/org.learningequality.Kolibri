@@ -16,6 +16,7 @@ finish-args:
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
+  - --env=KOLIBRI_STATIC_USE_SYMLINKS=0
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -44,7 +45,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 1ce62566c53857a13aabb82e960e894ef6c41758
+        commit: d46ecfcaa6fb7c19385e701facdcbc9c82ce5a48
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
