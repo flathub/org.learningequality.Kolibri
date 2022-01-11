@@ -16,6 +16,7 @@ finish-args:
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
+  - --env=KOLIBRI_STATIC_USE_SYMLINKS=0
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -25,56 +26,15 @@ add-extensions:
     no-autodownload: true
 
 modules:
-  - name: iproute2
-    buildsystem: autotools
-    make-install-args:
-      - PREFIX=${FLATPAK_DEST}
-      - SBINDIR=${FLATPAK_DEST}/bin
-      - CONFDIR=${FLATPAK_DEST}/etc/iproute2
-    sources:
-      - type: archive
-        url: https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.7.0.tar.xz
-        sha256: 725dc7ba94aae54c6f8d4223ca055d9fb4fe89d6994b1c03bfb4411c4dd10f21
-    cleanup:
-      - /include
-      - /share/man
-
-  - python3-kolibri.json
-
-  - python3-kolibri-pytz.json
-
-  - python3-kolibri-app-desktop-xdg-plugin.json
-
-  - name: kolibri-home-template
-    buildsystem: simple
-    build-options:
-      env:
-        KOLIBRI_HOME: /app/share/kolibri-home-template
-    build-commands:
-      - install -d ${KOLIBRI_HOME}
-      - yes 'yes' | kolibri manage migrate
-      - yes 'yes' | kolibri manage collectstatic
-      - yes 'yes' | kolibri manage deprovision
-      - rm -rf ${KOLIBRI_HOME}/logs
-      - rm -rf ${KOLIBRI_HOME}/sessions
-      - rm -rf ${KOLIBRI_HOME}/process_cache
-      - touch ${KOLIBRI_HOME}/was_preseeded
-
-  - python3-setproctitle.json
-
-  - python3-requests.json
-
-  - python3-virtualenv-api.json
-
-  - name: pyeverywhere
-    buildsystem: simple
-    build-commands:
-      - pip3 install --prefix=${FLATPAK_DEST} .
-    sources:
-      - type: git
-        url: https://github.com/kollivier/pyeverywhere.git
-        # branch: dev
-        commit: 63cdb6dd642ebce4af6a5134dbabcd4bd4f2a96d
+  - modules/iproute2.json
+  - modules/python3-kolibri.json
+  - modules/python3-kolibri-pytz.json
+  - modules/python3-kolibri-app-desktop-xdg-plugin.json
+  - modules/python3-kolibri-desktop-auth-plugin.json
+  - modules/kolibri-home-template.json
+  - modules/python3-setproctitle.json
+  - modules/python3-virtualenv-api.json
+  - modules/kolibri-content-dir.json
 
   - name: kolibri-gnome
     buildsystem: meson
@@ -84,18 +44,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 83303e82089687fdb45192e2444089f7db30274c
-
-  - name: kolibri-content-dir
-    buildsystem: simple
-    build-commands:
-      - install -d -m 755 ${FLATPAK_DEST}/share/kolibri-content
-
-  - name: python37-python38-migration-symlink
-    buildsystem: simple
-    build-commands:
-      - install -d -m 755 /app/lib/python3.7/site-packages
-      - ln -s /app/lib/python3.8/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
+        tag: v2.0
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
@@ -143,9 +92,25 @@ modules:
         /app/lib/python3.8/site-packages/kolibri/dist/sqlalchemy/testing
         /app/lib/python3.8/site-packages/kolibri/dist/tempora/tests
         /app/lib/python3.8/site-packages/kolibri/dist/tzlocal/test_data
+      - >
+        find
+        /app/lib/python3.8 /app/share/kolibri-home-template
+        -name '*.js.map' -exec rm '{}' '+'
     sources:
       - type: file
         path: cleanup-unused-locales.py
+
+  - name: migrate-kolibri-python37-python38
+    buildsystem: simple
+    build-commands:
+      - install -d -m 755 /app/lib/python3.7/site-packages
+      - ln -s /app/lib/python3.8/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
+
+  - name: migrate-kolibri-daemon-path
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/libexec/kolibri-gnome
+      - ln -s /app/libexec/kolibri-app/kolibri-daemon /app/libexec/kolibri-gnome/kolibri-daemon
 
   - name: kolibri-tools
     buildsystem: simple
