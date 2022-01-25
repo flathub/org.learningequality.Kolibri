@@ -24,6 +24,14 @@ add-extensions:
     directory: share/kolibri-content
     subdirectories: true
     no-autodownload: true
+  org.freedesktop.Platform.ffmpeg-full:
+    directory: 'lib/ffmpeg'
+    version: '20.08'
+    add-ld-path: '.'
+    autodelete: false
+
+cleanup-commands:
+  - mkdir -p /app/lib/ffmpeg
 
 modules:
   - modules/iproute2.json
