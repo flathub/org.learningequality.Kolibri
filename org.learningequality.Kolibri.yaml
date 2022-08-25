@@ -16,7 +16,6 @@ finish-args:
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
-  - --env=KOLIBRI_STATIC_USE_SYMLINKS=0
 
 add-extensions:
   org.learningequality.Kolibri.Content:
