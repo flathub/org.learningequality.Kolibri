@@ -1,7 +1,7 @@
 ---
 app-id: org.learningequality.Kolibri
 runtime: org.gnome.Platform
-runtime-version: '41'
+runtime-version: '42'
 sdk: org.gnome.Sdk
 command: kolibri-gnome
 
@@ -16,7 +16,6 @@ finish-args:
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
-  - --env=KOLIBRI_STATIC_USE_SYMLINKS=0
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -56,7 +55,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        commit: 009ab523b0d35102c6686ded06ba1c562d14024b
+        tag: v2.1.4
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
