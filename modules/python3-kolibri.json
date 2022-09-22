@@ -9,8 +9,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/ec/ff/402890b344c01c195044c6de46bfc1499dcaa7b2c7f098ec995b31a08fa7/kolibri-0.15.7-py2.py3-none-any.whl",
-            "sha256": "8afb26d25c04f2c150efb38b84e1dfbf6912143f0e3f66709507ce1111b03bc4"
+            "url": "https://github.com/learningequality/kolibri/releases/download/v0.16.0-alpha5/kolibri-0.16.0a5-py2.py3-none-any.whl",
+            "sha256": "a758151820dd6fbbda67594d455947bc5a07acd46754cc0dcccbdca7b27bf318"
         },
         {
             "type": "dir",
