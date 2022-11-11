@@ -3,6 +3,7 @@ from kolibri.utils.cli import initialize
 
 initialize()
 
+import os
 import click
 import enum
 import operator
@@ -13,6 +14,8 @@ from kolibri.core.content.models import ChannelMetadata
 from kolibri.core.content.models import ContentNode
 from kolibri.dist.django.db.models import Q
 
+from kolibri.core.content.utils.import_export_content import get_import_export_data
+from kolibri.core.content.utils import paths
 
 class OutputFormat(enum.Enum):
     PLAIN = enum.auto()
@@ -155,7 +158,10 @@ class OutputWriter_Plain(OutputWriter):
                 file=output,
             )
             click.secho(
-                "{nodes} content nodes".format(nodes=content_list.pick_nodes_count),
+                "{nodes} content nodes - {required_bytes} bytes".format(
+                    nodes=content_list.pick_nodes_count,
+                    required_bytes=content_list.required_bytes,
+                ),
                 dim=True,
                 file=output,
             )
@@ -194,7 +200,10 @@ class OutputWriter_INI(OutputWriter):
         output.write("# {datetime}\n".format(datetime=datetime.now()))
         output.write("\n")
 
+        total_required_bytes = sum(cl.required_bytes for cl in self.filtered_content_lists)
+
         output.write("[kolibri]\n")
+        output.write("total_required_bytes = {}\n".format(total_required_bytes))
         output.write("install_channels =\n")
         for content_list in self.visible_content_lists:
             output.write(
@@ -209,6 +218,7 @@ class OutputWriter_INI(OutputWriter):
         for content_list in self.filtered_content_lists:
             output.write("[kolibri-{}]\n".format(content_list.channel_id))
             output.write("version = {}\n".format(content_list.channel_version))
+            output.write("required_bytes = {}\n".format(content_list.required_bytes))
             self.__write_node_list(
                 content_list.include_nodes, "include_node_ids", output
             )
@@ -291,6 +301,7 @@ class ContentList(object):
         self.__pick_nodes = None
         self.__include_nodes = set()
         self.__exclude_nodes = set()
+        self.__cached_required_bytes = None
 
     @property
     def channel_id(self):
@@ -323,6 +334,29 @@ class ContentList(object):
     @property
     def exclude_nodes(self):
         return sorted(self.__exclude_nodes, key=lambda node: node.lft)
+
+    @property
+    def required_bytes(self):
+        if self.__cached_required_bytes is None:
+            database_bytes = self.__get_database_bytes()
+            storage_bytes = self.__get_storage_bytes()
+            self.__cached_required_bytes = database_bytes + storage_bytes
+
+        return self.__cached_required_bytes
+
+    def __get_database_bytes(self):
+        database_path = paths.get_content_database_file_path(self.channel_id)
+        return os.stat(database_path).st_size
+
+    def __get_storage_bytes(self):
+        node_ids = list(node.id for node in self.include_nodes)
+        exclude_node_ids = list(node.id for node in self.exclude_nodes)
+        _, _, storage_bytes = get_import_export_data(
+            channel_id=self.channel_id,
+            node_ids=node_ids,
+            exclude_node_ids=exclude_node_ids,
+        )
+        return storage_bytes
 
     def select_content(self, pick_nodes):
         self.__pick_nodes = pick_nodes.all()
