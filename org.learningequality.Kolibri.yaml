@@ -12,7 +12,6 @@ finish-args:
   - --socket=fallback-x11
   - --socket=pulseaudio
   - --socket=wayland
-  - --socket=x11
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
@@ -38,6 +37,7 @@ build-options:
 
 modules:
   - modules/iproute2.json
+  - modules/python3-markdown.json
   - modules/python3-kolibri.json
   - modules/python3-kolibri-pytz.json
   - modules/python3-kolibri-app-desktop-xdg-plugin.json
