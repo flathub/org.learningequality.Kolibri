@@ -147,8 +147,9 @@ class OutputWriter_Plain(OutputWriter):
     def write(self, output):
         for content_list in self.visible_content_lists:
             click.echo(
-                "{name} ({id})".format(
+                "{name} v{version} ({id})".format(
                     id=content_list.channel_id,
+                    version=content_list.channel_version,
                     name=click.style(content_list.channel_name, bold=True),
                 ),
                 file=output,
@@ -207,6 +208,7 @@ class OutputWriter_INI(OutputWriter):
 
         for content_list in self.filtered_content_lists:
             output.write("[kolibri-{}]\n".format(content_list.channel_id))
+            output.write("version = {}\n".format(content_list.channel_version))
             self.__write_node_list(
                 content_list.include_nodes, "include_node_ids", output
             )
@@ -297,6 +299,10 @@ class ContentList(object):
     @property
     def channel_name(self):
         return self.__channelmetadata.name
+
+    @property
+    def channel_version(self):
+        return self.__channelmetadata.version
 
     @property
     def has_content(self):
