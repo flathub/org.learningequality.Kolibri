@@ -352,6 +352,7 @@ class ContentList(object):
         node_ids = list(node.id for node in self.include_nodes)
         exclude_node_ids = list(node.id for node in self.exclude_nodes)
         _, _, storage_bytes = get_import_export_data(
+            available=None,
             channel_id=self.channel_id,
             node_ids=node_ids,
             exclude_node_ids=exclude_node_ids,
