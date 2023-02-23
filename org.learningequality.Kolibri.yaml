@@ -53,6 +53,7 @@ modules:
   - modules/python3-setproctitle.json
   - modules/python3-virtualenv-api.json
   - modules/kolibri-content-dir.json
+  - modules/kolibri-plugins-dir.json
 
   - name: kolibri-gnome
     buildsystem: meson
@@ -62,12 +63,7 @@ modules:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
         # branch: master
-        tag: v2.1.4
-
-  - name: kolibri-plugins-dir
-    buildsystem: simple
-    build-commands:
-      - install -d -m 755 ${FLATPAK_DEST}/kolibri-plugins
+        tag: v2.2.0
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
