@@ -15,6 +15,7 @@ finish-args:
   - --system-talk-name=org.learningequality.Kolibri.Daemon
   - --env=KOLIBRI_HOME=~/.var/app/org.learningequality.Kolibri/data/kolibri
   - --env=KOLIBRI_HTTP_PORT=0
+  - --env=PYTHONPATH=/app/kolibri-plugins/lib/python
 
 add-extensions:
   org.learningequality.Kolibri.Content:
@@ -27,6 +28,12 @@ add-extensions:
     version: '21.08'
     add-ld-path: '.'
     autodelete: false
+  org.learningequality.Kolibri.Plugin:
+    version: '1.0'
+    directory: kolibri-plugins
+    merge-dirs: lib/python
+    subdirectories: true
+    no-autodownload: true
 
 cleanup-commands:
   - mkdir -p /app/lib/ffmpeg
@@ -46,6 +53,7 @@ modules:
   - modules/python3-setproctitle.json
   - modules/python3-virtualenv-api.json
   - modules/kolibri-content-dir.json
+  - modules/kolibri-plugins-dir.json
 
   - name: kolibri-gnome
     buildsystem: meson
@@ -54,8 +62,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        branch: alpha
-        commit: c13f1d34ee4d736f703b4f9c2f17c256181df888
+        # branch: master
+        tag: v2.2.1
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
