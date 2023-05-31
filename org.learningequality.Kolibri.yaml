@@ -122,18 +122,6 @@ modules:
       - type: file
         path: cleanup-unused-locales.py
 
-  - name: migrate-kolibri-python37-python39
-    buildsystem: simple
-    build-commands:
-      - install -d -m 755 /app/lib/python3.7/site-packages
-      - ln -s /app/lib/python3.9/site-packages/kolibri /app/lib/python3.7/site-packages/kolibri
-
-  - name: migrate-kolibri-python38-python39
-    buildsystem: simple
-    build-commands:
-      - install -d -m 755 /app/lib/python3.8/site-packages
-      - ln -s /app/lib/python3.9/site-packages/kolibri /app/lib/python3.8/site-packages/kolibri
-
   - name: migrate-kolibri-daemon-path
     buildsystem: simple
     build-commands:
