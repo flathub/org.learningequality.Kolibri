@@ -1,7 +1,7 @@
 ---
 app-id: org.learningequality.Kolibri
 runtime: org.gnome.Platform
-runtime-version: '42'
+runtime-version: '44'
 sdk: org.gnome.Sdk
 command: kolibri-gnome
 
@@ -40,7 +40,7 @@ cleanup-commands:
 
 build-options:
   env:
-    KOLIBRI_MODULE_PATH: /app/lib/python3.9/site-packages/kolibri
+    KOLIBRI_MODULE_PATH: /app/lib/python3.10/site-packages/kolibri
 
 modules:
   - modules/iproute2.json
@@ -116,7 +116,7 @@ modules:
         ${KOLIBRI_MODULE_PATH}/dist/tzlocal/test_data
       - >
         find
-        /app/lib/python3.9 /app/share/kolibri-home-template
+        /app/lib/python3.10 /app/share/kolibri-home-template
         -name '*.js.map' -exec rm '{}' '+'
     sources:
       - type: file
