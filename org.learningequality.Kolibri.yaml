@@ -1,7 +1,7 @@
 ---
 app-id: org.learningequality.Kolibri
 runtime: org.gnome.Platform
-runtime-version: '44'
+runtime-version: '46'
 sdk: org.gnome.Sdk
 command: kolibri-gnome
 
@@ -25,7 +25,7 @@ add-extensions:
     no-autodownload: true
   org.freedesktop.Platform.ffmpeg-full:
     directory: 'lib/ffmpeg'
-    version: '21.08'
+    version: '23.08'
     add-ld-path: '.'
     autodelete: false
   org.learningequality.Kolibri.Plugin:
@@ -40,30 +40,24 @@ cleanup-commands:
 
 build-options:
   env:
-    KOLIBRI_MODULE_PATH: /app/lib/python3.10/site-packages/kolibri
+    KOLIBRI_MODULE_PATH: /app/lib/python3.11/site-packages/kolibri
 
 modules:
   - modules/iproute2.json
-  - modules/python3-markdown.json
   - modules/python3-kolibri.json
   - modules/python3-kolibri-pytz.json
   - modules/python3-kolibri-app-desktop-xdg-plugin.json
-  - modules/python3-kolibri-desktop-auth-plugin.json
-  - modules/kolibri-home-template.json
   - modules/python3-setproctitle.json
-  - modules/python3-virtualenv-api.json
   - modules/kolibri-content-dir.json
   - modules/kolibri-plugins-dir.json
 
   - name: kolibri-gnome
     buildsystem: meson
-    config-opts:
-      - -Dkolibri_home_template_dir=/app/share/kolibri-home-template
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        # branch: master
-        tag: v2.3.4
+        tag: v3.0
+        commit: d13f132d2ed69f344d6606a3f75b609ee7e27759
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
@@ -90,11 +84,10 @@ modules:
       - >
         rm -rf
         ${KOLIBRI_MODULE_PATH}/dist/cext/cp27
-        ${KOLIBRI_MODULE_PATH}/dist/cext/cp34
-        ${KOLIBRI_MODULE_PATH}/dist/cext/cp35
         ${KOLIBRI_MODULE_PATH}/dist/cext/cp36
         ${KOLIBRI_MODULE_PATH}/dist/cext/cp37
         ${KOLIBRI_MODULE_PATH}/dist/cext/cp38
+        ${KOLIBRI_MODULE_PATH}/dist/cext/cp39
         ${KOLIBRI_MODULE_PATH}/dist/cext/*/Windows
       - >
         rm -rf
@@ -114,10 +107,6 @@ modules:
         ${KOLIBRI_MODULE_PATH}/dist/sqlalchemy/testing
         ${KOLIBRI_MODULE_PATH}/dist/tempora/tests
         ${KOLIBRI_MODULE_PATH}/dist/tzlocal/test_data
-      - >
-        find
-        /app/lib/python3.10 /app/share/kolibri-home-template
-        -name '*.js.map' -exec rm '{}' '+'
     sources:
       - type: file
         path: cleanup-unused-locales.py
