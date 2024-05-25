@@ -47,6 +47,7 @@ modules:
   - modules/python3-kolibri.json
   - modules/python3-kolibri-pytz.json
   - modules/python3-kolibri-app-desktop-xdg-plugin.json
+  - modules/python3-kolibri-desktop-auth-plugin.json
   - modules/python3-setproctitle.json
   - modules/kolibri-content-dir.json
   - modules/kolibri-plugins-dir.json
@@ -56,8 +57,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        tag: v3.0
-        commit: d13f132d2ed69f344d6606a3f75b609ee7e27759
+        tag: v3.0.1
+        commit: b6482e80c8a03fd1004ab736dc8ea4972ce6a7d3
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
