@@ -57,8 +57,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        tag: v3.0.2
-        commit: e310f1134494f74c652282414a1124a70ec88590
+        tag: v3.1
+        commit: 46b2773e2a8b5b9a651265e257ac36eed8034664
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
@@ -73,8 +73,6 @@ modules:
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/auth/locale
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/contenttypes/locale
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/flatpages/locale
-        ${KOLIBRI_MODULE_PATH}/dist/django/contrib/gis/locale
-        ${KOLIBRI_MODULE_PATH}/dist/django/contrib/humanize/locale
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/postgres/locale
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/redirects/locale
         ${KOLIBRI_MODULE_PATH}/dist/django/contrib/sessions/locale
