@@ -51,14 +51,15 @@ modules:
   - modules/python3-setproctitle.json
   - modules/kolibri-content-dir.json
   - modules/kolibri-plugins-dir.json
+  - modules/kolibri-loading-page.json
 
   - name: kolibri-gnome
     buildsystem: meson
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        tag: v3.1
-        commit: 46b2773e2a8b5b9a651265e257ac36eed8034664
+        tag: v3.3
+        commit: e5eb26aa15f4dea8f9b098faa1e9099e03c59941
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
