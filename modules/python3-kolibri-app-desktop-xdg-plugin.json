@@ -7,23 +7,46 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/bb/26/7945080113158354380a12ce26873dd6c1ebd88d47f5bc24e2c5bb38c16a/setuptools-68.2.2-py3-none-any.whl",
-            "sha256": "b454a35605876da60632df1a60f736524eb73cc47bbc9f3f1ef1b644de74fd2a"
+            "url": "https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl",
+            "sha256": "c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32",
+            "x-checker-data": {
+                "type": "pypi",
+                "name": "setuptools",
+                "packagetype": "bdist_wheel"
+            }
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/c7/c3/55076fc728723ef927521abaa1955213d094933dc36d4a2008d5101e1af5/wheel-0.42.0-py3-none-any.whl",
-            "sha256": "177f9c9b0d45c47873b619f5b650346d632cdc35fb5e4d25058e09c9e581433d"
+            "url": "https://files.pythonhosted.org/packages/7d/cd/d7460c9a869b16c3dd4e1e403cce337df165368c71d6af229a74699622ce/wheel-0.43.0-py3-none-any.whl",
+            "sha256": "55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81",
+            "x-checker-data": {
+                "type": "pypi",
+                "name": "wheel",
+                "packagetype": "bdist_wheel"
+            }
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/80/d7/c4b258c9098b469c4a4e77b0a99b5f4fd21e359c2e486c977d231f52fc71/Pillow-10.1.0.tar.gz",
-            "sha256": "e6bf8de6c36ed96c86ea3b6e1d5273c53f46ef518a062464cd7ef5dd2cf92e38"
+            "url": "https://files.pythonhosted.org/packages/ef/43/c50c17c5f7d438e836c169e343695534c38c77f60e7c90389bd77981bc21/pillow-10.3.0.tar.gz",
+            "sha256": "9d2455fbf44c914840c793e89aa82d0e1763a14253a000743719ae5946814b2d",
+            "x-checker-data": {
+                "type": "pypi",
+                "name": "Pillow",
+                "versions": {
+                    ">=": "10.1.0",
+                    "<": "11.0.0"
+                }
+            }
         },
         {
             "type": "file",
             "url": "https://files.pythonhosted.org/packages/44/01/a40f3823fc367731e5cd7a90306b0cc3af080b1e13f59fd66efb3ff7bec4/kolibri_app_desktop_xdg_plugin-1.2.0-py3-none-any.whl",
-            "sha256": "d689e7cdcdad49a2897fa1ce9069ff9d57e375c7918a4e5b27bb6fbe4d3e5859"
+            "sha256": "d689e7cdcdad49a2897fa1ce9069ff9d57e375c7918a4e5b27bb6fbe4d3e5859",
+            "x-checker-data": {
+                "type": "pypi",
+                "name": "kolibri-app-desktop-xdg-plugin",
+                "packagetype": "bdist_wheel"
+            }
         }
     ]
 }
