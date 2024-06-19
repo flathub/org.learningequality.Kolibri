@@ -7,8 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl",
-            "sha256": "c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32",
+            "url": "https://files.pythonhosted.org/packages/55/b3/b3a3415d2debd837106ed417f8681d8af63037fed367fa1b85dbfef081f1/setuptools-70.1.0-py3-none-any.whl",
+            "sha256": "d9b8b771455a97c8a9f3ab3448ebe0b29b5e105f1228bba41028be116985a267",
             "x-checker-data": {
                 "type": "pypi",
                 "name": "setuptools",
