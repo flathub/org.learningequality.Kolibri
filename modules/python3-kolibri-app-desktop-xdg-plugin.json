@@ -7,8 +7,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e1/58/e0ef3b9974a04ce9cde2a7a33881ddcb2d68450803745804545cdd8d258f/setuptools-72.1.0-py3-none-any.whl",
-            "sha256": "5a03e1860cf56bb6ef48ce186b0e557fdba433237481a9a625176c2831be15d1",
+            "url": "https://files.pythonhosted.org/packages/6e/ec/06715d912351edc453e37f93f3fc80dcffd5ca0e70386c87529aca296f05/setuptools-72.2.0-py3-none-any.whl",
+            "sha256": "f11dd94b7bae3a156a95ec151f24e4637fb4fa19c878e4d191bfb8b2d82728c4",
             "x-checker-data": {
                 "type": "pypi",
                 "name": "setuptools",
@@ -40,8 +40,8 @@
         },
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/44/01/a40f3823fc367731e5cd7a90306b0cc3af080b1e13f59fd66efb3ff7bec4/kolibri_app_desktop_xdg_plugin-1.2.0-py3-none-any.whl",
-            "sha256": "d689e7cdcdad49a2897fa1ce9069ff9d57e375c7918a4e5b27bb6fbe4d3e5859",
+            "url": "https://files.pythonhosted.org/packages/46/b5/cb586cf1feb050bb1d628d3e3d00babf51e86d64a30b9713def351ccc32c/kolibri_app_desktop_xdg_plugin-1.2.1-py2.py3-none-any.whl",
+            "sha256": "8ef9b92f1fcefd6525d694af75bbe363230551f0301d4bf9380b0256f838e6f7",
             "x-checker-data": {
                 "type": "pypi",
                 "name": "kolibri-app-desktop-xdg-plugin",
