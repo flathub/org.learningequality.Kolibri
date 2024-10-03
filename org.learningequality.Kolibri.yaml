@@ -1,7 +1,7 @@
 ---
 app-id: org.learningequality.Kolibri
 runtime: org.gnome.Platform
-runtime-version: '46'
+runtime-version: '47'
 sdk: org.gnome.Sdk
 command: kolibri-gnome
 
@@ -25,7 +25,7 @@ add-extensions:
     no-autodownload: true
   org.freedesktop.Platform.ffmpeg-full:
     directory: 'lib/ffmpeg'
-    version: '23.08'
+    version: '24.08'
     add-ld-path: '.'
     autodelete: false
   org.learningequality.Kolibri.Plugin:
@@ -40,12 +40,11 @@ cleanup-commands:
 
 build-options:
   env:
-    KOLIBRI_MODULE_PATH: /app/lib/python3.11/site-packages/kolibri
+    KOLIBRI_MODULE_PATH: /app/lib/python3.12/site-packages/kolibri
 
 modules:
   - modules/iproute2.json
   - modules/python3-kolibri.json
-  - modules/python3-kolibri-pytz.json
   - modules/python3-kolibri-app-desktop-xdg-plugin.json
   - modules/python3-kolibri-desktop-auth-plugin.json
   - modules/python3-setproctitle.json
@@ -58,8 +57,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/learningequality/kolibri-installer-gnome.git
-        tag: v3.7
-        commit: 6dde2efffe46b14dac2b846c584308f22c4f418b
+        tag: v3.8
+        commit: 4f81b7b2682f3bc438ddd44b60fc66b1b83a71e7
 
   - name: python3-kolibri-cleanup
     buildsystem: simple
