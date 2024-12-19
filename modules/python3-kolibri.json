@@ -8,8 +8,8 @@
     "sources": [
         {
             "type": "file",
-            "url": "https://files.pythonhosted.org/packages/7b/a1/3ffe45a7247c1f811db09809e42de725cf564877f879fdbe99bdfda5531f/kolibri-0.17.3-py2.py3-none-any.whl",
-            "sha256": "655f18123925472d1806c9cc04469fac548fb90a1e3d1ba5b7fb6a7649b22efd",
+            "url": "https://files.pythonhosted.org/packages/b9/16/636a46ecf7c157120534031f1bbf3351ab16af16e32ecb3ab93f90c6ceff/kolibri-0.17.5-py2.py3-none-any.whl",
+            "sha256": "c167d955033a4a31658b7655260921dc1015cafe4f32e787de238519d56aacd1",
             "x-checker-data": {
                 "type": "pypi",
                 "name": "kolibri",
