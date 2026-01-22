@@ -121,5 +121,5 @@ modules:
     build-commands:
       - install -m 755 -t ${FLATPAK_DEST}/bin kolibri-listcontent.py
     sources:
-      - type: dir
-        path: tools
+      - type: file
+        path: tools/kolibri-listcontent.py
